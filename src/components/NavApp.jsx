@@ -5,7 +5,7 @@ export const NavApp = ({ logged = false }) => {
     const navigate = useNavigate();
     return (
         <>
-            <nav className="navbar navbar-expand-lg bg-dark navbar-dark" data-bs-theme="dark">
+            <nav className="navbar navbar-expand-lg bg-dark navbar-dark py-2" data-bs-theme="dark">
                 <div className="container">
                     <a className="navbar-brand" href="#">SMARTBUY</a>
                     <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
@@ -25,6 +25,27 @@ export const NavApp = ({ logged = false }) => {
                                     </>
                                 )
                             }
+                            {
+                                logged && (
+                                    <>
+                                        <li className="nav-item">
+                                            <a className="nav-link" href="#" onClick={() => navigate('/customer')}>Clientes</a>
+                                        </li>
+                                        <li className="nav-item">
+                                            <a className="nav-link" href="#" onClick={() => navigate('/quotation')}>Cotizaciones</a>
+                                        </li>
+                                        <li className="nav-item">
+                                            <a className="nav-link" href="#" onClick={() => navigate('/dashboard')}>Dashboard</a>
+                                        </li>
+                                        <li>
+                                            <div className="avatar">
+                                                <span>C</span>
+                                            </div>
+                                        </li>
+                                    </>
+                                )
+                            }
+
                         </ul>
                     </div>
                 </div>
