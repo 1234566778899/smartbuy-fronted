@@ -1,54 +1,37 @@
 import React from 'react'
 import { closeModal } from '../utils'
+import { CARS } from '../utils/Cars'
+import { useState } from 'react'
 
-export const FindCarApp = () => {
+export const FindCarApp = ({ selectCar }) => {
+    const [carFiltered, setCarFiltered] = useState(CARS)
+
+    const filterCar = (param) => {
+        param = param.toLowerCase();
+        setCarFiltered(CARS.filter(car => car.name.toLowerCase().includes(param) || car.description.toLowerCase().includes(param)));
+    }
     return (
         <div id='find_car'>
             <div className="box">
                 <h4 className='text-center'>Seleccione un auto</h4>
                 <hr />
-                <div className='form-grouo'>
-                    <h6 className='form-label'>Buscar auto</h6>
-                    <input type="text" className='form-control' placeholder='Nombre del auto..' />
+                <div className='form-group'>
+                    <label className='form-label'>Buscar auto</label>
+                    <input type="text" className='form-control bg-white' placeholder='Nombre del auto..' onChange={(e) => filterCar(e.target.value)} />
                 </div>
-                <p>Seleccione el auto a financiar</p>
+                <br />
+                <label>Seleccione el auto a financiar</label>
                 <div className="group-autos">
-                    <div className="car-box">
-                        <img src="https://img.freepik.com/fotos-premium/coche-deportivo-aislado-ilustracion-renderizado-3d-fondo_494250-4838.jpg?size=338&ext=jpg&ga=GA1.1.386372595.1696464000&semt=ais" alt="img-auto" />
-                        <span><strong>Audi</strong></span><br />
-                        <span>Luxury sedan with leather interior</span>
-                        <h6>S/. 50,245.00</h6>
-                    </div>
-                    <div className="car-box">
-                        <img src="https://img.freepik.com/fotos-premium/coche-deportivo-aislado-ilustracion-renderizado-3d-fondo_494250-4838.jpg?size=338&ext=jpg&ga=GA1.1.386372595.1696464000&semt=ais" alt="img-auto" />
-                        <span><strong>Audi</strong></span><br />
-                        <span>Luxury sedan with leather interior</span>
-                        <h6>S/. 50,245.00</h6>
-                    </div>
-                    <div className="car-box">
-                        <img src="https://img.freepik.com/fotos-premium/coche-deportivo-aislado-ilustracion-renderizado-3d-fondo_494250-4838.jpg?size=338&ext=jpg&ga=GA1.1.386372595.1696464000&semt=ais" alt="img-auto" />
-                        <span><strong>Audi</strong></span><br />
-                        <span>Luxury sedan with leather interior</span>
-                        <h6>S/. 50,245.00</h6>
-                    </div>
-                    <div className="car-box">
-                        <img src="https://img.freepik.com/fotos-premium/coche-deportivo-aislado-ilustracion-renderizado-3d-fondo_494250-4838.jpg?size=338&ext=jpg&ga=GA1.1.386372595.1696464000&semt=ais" alt="img-auto" />
-                        <span><strong>Audi</strong></span><br />
-                        <span>Luxury sedan with leather interior</span>
-                        <h6>S/. 50,245.00</h6>
-                    </div>
-                    <div className="car-box">
-                        <img src="https://img.freepik.com/fotos-premium/coche-deportivo-aislado-ilustracion-renderizado-3d-fondo_494250-4838.jpg?size=338&ext=jpg&ga=GA1.1.386372595.1696464000&semt=ais" alt="img-auto" />
-                        <span><strong>Audi</strong></span><br />
-                        <span>Luxury sedan with leather interior</span>
-                        <h6>S/. 50,245.00</h6>
-                    </div>
-                    <div className="car-box">
-                        <img src="https://img.freepik.com/fotos-premium/coche-deportivo-aislado-ilustracion-renderizado-3d-fondo_494250-4838.jpg?size=338&ext=jpg&ga=GA1.1.386372595.1696464000&semt=ais" alt="img-auto" />
-                        <span><strong>Audi</strong></span><br />
-                        <span>Luxury sedan with leather interior</span>
-                        <h6>S/. 50,245.00</h6>
-                    </div>
+                    {
+                        carFiltered.map(car => (
+                            <div key={car.id} className="car-box" onClick={() => { selectCar(car); closeModal('#find_car'); }}>
+                                <img src={car.img} alt="img-auto" />
+                                <span><strong>{car.name}</strong></span><br />
+                                <span>{car.description}</span>
+                                <h6>{car.price.toLocaleString(undefined, { style: 'currency', currency: 'USD' })}</h6>
+                            </div>
+                        ))
+                    }
                 </div>
                 <div className="text-right">
                     <button className='btn btn-danger mt-2' onClick={() => closeModal('#find_car')}>Cancelar</button>

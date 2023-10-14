@@ -1,7 +1,19 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { closeModal } from '../utils'
+import axios from 'axios';
 
-export const FindCustomerApp = () => {
+export const FindCustomerApp = ({ selectUser }) => {
+    const [users, setUsers] = useState([]);
+    const getCustomers = () => {
+        axios.get('http://localhost:4000/user/list')
+            .then(res => {
+                setUsers(res.data);
+            })
+            .catch(error => console.log(error));
+    }
+    useEffect(() => {
+        getCustomers();
+    }, [])
     return (
         <div id='find_customer'>
             <div className="box">
@@ -21,41 +33,15 @@ export const FindCustomerApp = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>61126863</td>
-                                <td>Carlos Jesús</td>
-                                <td>Ordaz Hoyos</td>
-                            </tr>
-                            <tr>
-                                <td>61126863</td>
-                                <td>Carlos Jesús</td>
-                                <td>Ordaz Hoyos</td>
-                            </tr>
-                            <tr>
-                                <td>61126863</td>
-                                <td>Carlos Jesús</td>
-                                <td>Ordaz Hoyos</td>
-                            </tr>
-                            <tr>
-                                <td>61126863</td>
-                                <td>Carlos Jesús</td>
-                                <td>Ordaz Hoyos</td>
-                            </tr>
-                            <tr>
-                                <td>61126863</td>
-                                <td>Carlos Jesús</td>
-                                <td>Ordaz Hoyos</td>
-                            </tr>
-                            <tr>
-                                <td>61126863</td>
-                                <td>Carlos Jesús</td>
-                                <td>Ordaz Hoyos</td>
-                            </tr>
-                            <tr>
-                                <td>61126863</td>
-                                <td>Carlos Jesús</td>
-                                <td>Ordaz Hoyos</td>
-                            </tr>
+                            {
+                                users.map(user => (
+                                    <tr key={user._id} onClick={() => { selectUser(user); closeModal('#find_customer')}}>
+                                        <td>{user.dni}</td>
+                                        <td>{user.name}</td>
+                                        <td>{user.lname}</td>
+                                    </tr>
+                                ))
+                            }
                         </tbody>
                     </table>
                 </div>

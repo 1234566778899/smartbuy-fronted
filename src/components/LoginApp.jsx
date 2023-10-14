@@ -8,11 +8,10 @@ import '../styles/main.css'
 export const LoginApp = () => {
     const navigate = useNavigate();
     const { register, handleSubmit, formState: { errors } } = useForm();
-    const [cargando, setCargando] = useState(false);
     const [alert, setAlert] = useState(null);
     const login = (data) => {
         data.username = data.email;
-        axios.post('http://localhost:4000/login', data)
+        axios.post('http://localhost:4000/user/login', data)
             .then(x => {
                 navigate('/dashboard');
             })

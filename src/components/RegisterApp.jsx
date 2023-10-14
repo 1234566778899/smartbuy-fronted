@@ -10,7 +10,7 @@ export const RegisterApp = () => {
     const [alert, setAlert] = useState(null)
 
     const submitRegister = (data) => {
-        axios.post('http://localhost:4000/register', data)
+        axios.post('http://localhost:4000/user/register', data)
             .then(res => {
                 navigate('/dashboard');
             })
