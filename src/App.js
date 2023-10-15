@@ -6,6 +6,7 @@ import { DashboardApp } from './components/DashboardApp';
 import { CustomerApp } from './components/CustomerApp';
 import { QuotationApp } from './components/QuotationApp';
 import { AddQuotationApp } from './components/AddQuotationApp';
+import { ScheduleApp } from './components/ScheduleApp';
 
 
 
@@ -20,6 +21,7 @@ function App() {
         <Route exact path='/customer' element={<CustomerApp />} />
         <Route exact path='/quotation' element={<QuotationApp />} />
         <Route exact path='/add/quotation' element={<AddQuotationApp />} />
+        <Route exact path='/schedule' element={<ScheduleApp />} />
       </Routes>
     </>
   );
