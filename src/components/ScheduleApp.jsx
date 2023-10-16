@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { NavApp } from './NavApp';
+import { generatePdfSchedule } from '../utils/pdf/Schedule';
 
 export const ScheduleApp = () => {
     const [payments, setPayments] = useState([]);
@@ -84,7 +85,7 @@ export const ScheduleApp = () => {
                 <h4>Cronograma de Pagos</h4>
                 <hr />
                 <div className="text-right mb-2">
-                    <button className='btn btn-info'>Descargar PDF</button>
+                    <button className='btn btn-info' onClick={() => generatePdfSchedule(payments,148530)}>Descargar PDF</button>
                     <button className='btn btn-success ml-2'>Descargar EXEL</button>
                 </div>
                 <div className="table-schedule">
