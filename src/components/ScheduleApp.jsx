@@ -3,7 +3,7 @@ import { NavApp } from './NavApp';
 import { generatePdfSchedule } from '../utils/pdf/Schedule';
 import { closeModal, setVisible } from '../utils';
 
-export const ScheduleApp = () => {
+export const ScheduleApp = ({ handleVisible }) => {
     const [payments, setPayments] = useState([]);
     const [van, setvan] = useState();
     const generateSchedule = (numDues, loanAmount, fee, insure, risk, portes, cok) => {
@@ -128,7 +128,10 @@ export const ScheduleApp = () => {
         <>
             <br />
             <div className="d-flex justify-content-between align-items-center">
-                <h4>Cronograma de Pagos</h4>
+                <div className='d-flex justify-content-between align-items-center'>
+                    <i className="fa-solid fa-backward icon" onClick={() => handleVisible()}></i>
+                    <h4 className='ml-3'>Cronograma de Pagos</h4>
+                </div>
                 <button className='btn btn-info' onClick={() => generatePdfSchedule(payments, 148530)}>GENERAR PLAN DE PAGOS</button>
             </div>
             <hr />

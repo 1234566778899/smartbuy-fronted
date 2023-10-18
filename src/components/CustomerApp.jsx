@@ -55,7 +55,7 @@ export const CustomerApp = () => {
                             <input type="text" className='form-control bg-white' placeholder='Nombre del cliente..' />
                         </div>
                         <div className='table-customer'>
-                            <table className='table text-center bg-white'>
+                            <table className='text-center bg-white'>
                                 <thead>
                                     <tr>
                                         <th>N°</th>
@@ -75,9 +75,10 @@ export const CustomerApp = () => {
                                                 <td>{user.name}</td>
                                                 <td>{user.lname}</td>
                                                 <td>S/. {user.monthly_income}</td>
-                                                <td className='d-flex'>
-                                                    <button className='btn btn-info'>Editar</button>
-                                                    <button className='btn btn-danger ml-1' onClick={() => deleteCustomer(user._id)}>Eliminar</button>
+                                                <td className='text-center'>
+                                                    <button className='btn btn-info'>
+                                                        <i class="fa-solid fa-user-pen"></i></button>
+                                                    <button className='btn btn-danger ml-1' onClick={() => deleteCustomer(user._id)}><i class="fa-solid fa-user-minus"></i></button>
                                                 </td>
                                             </tr>
                                         ))

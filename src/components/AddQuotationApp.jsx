@@ -21,7 +21,7 @@ export const AddQuotationApp = () => {
     const [riskInsure, setRiskInsure] = useState()
     const allForm = watch();
     const submitSchedule = (data) => {
-        //console.log(data)
+        console.log(data)
     }
     useEffect(() => {
         const priceCar = (car && car.price) || 0;
@@ -44,10 +44,9 @@ export const AddQuotationApp = () => {
         setInsureDeduct((creditLifeEnsurence) / 30 * frecuencyPay);
         setRiskInsure((riskEnsurence / 100) * priceCar / numberDuesYear);
     }, [car, allForm])
-    useEffect(() => {
-        setVisible('#box_add_quotation', false);
-        setVisible('#box_schedule', true);
-    }, [])
+
+
+
     return (
         <>
             <FindCustomerApp selectUser={setuser} />
@@ -55,13 +54,10 @@ export const AddQuotationApp = () => {
             <NavApp logged={true} />
             <div className="container">
                 <div id="box_schedule" style={{ display: 'none' }}>
-                    < ScheduleApp />
-                    <div className="text-center">
-                        <button className='btn btn-danger' onClick={() => {
-                            setVisible('#box_add_quotation', true);
-                            setVisible('#box_schedule', false);
-                        }}>Volver</button>
-                    </div>
+                    < ScheduleApp handleVisible={() => {
+                        setVisible('#box_add_quotation', true);
+                        setVisible('#box_schedule', false);
+                    }} />
                 </div>
                 <div id="box_add_quotation">
                     <br />
