@@ -235,29 +235,127 @@
 
 .table-schedule {
     overflow: auto;
+    box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.2);
 }
 
 .table-schedule table {
-    border: 1px solid rgb(73, 73, 73);
+    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.2);
     text-align: center;
     background-color: white;
 }
 
 .table-schedule table tr td {
-    padding: 5px 7px;
-    border: 1px solid rgb(73, 73, 73);
+    padding: 7px 7px;
+    border-bottom: 1px solid #EBEBEB;
 }
+
 .table-schedule table tr th {
     padding: 0px 5px;
-    border: 1px solid rgb(73, 73, 73);
+    border-bottom: 1px solid #EBEBEB;
 }
 
 .table-schedule thead tr {
-    background-color: #BFBFBF;
     color: black;
 }
-.table-cost td{
+
+.table-schedule table tr:hover {
+    background-color: #f3f3f3;
+}
+
+.table-cost {
+    background-color: white;
+    color: black;
+    box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.2);
+}
+
+.table-cost td {
     padding: 10px;
     align-items: start;
-    border: 1px solid rgb(73, 73, 73);
+    border-bottom: 1px solid #EBEBEB;
+
+}
+
+.cell-tea {
+    width: 20px;
+    padding: 0px 0px;
+    outline: none;
+    border: none;
+}
+
+.cell-tea:focus {
+    border-bottom: 1px solid black;
+}
+
+.cell-pg {
+    outline: none;
+    border: 1px solid white;
+    appearance: none;
+    padding: 0px 13px
+}
+
+.cell-pg:hover {
+    padding: 1px 0px;
+    border: 1px solid rgb(94, 94, 94);
+    appearance: menulist;
+}
+
+.head-pg {
+    cursor: pointer;
+}
+
+.head-pg:hover {
+    background-color: #e0e0e0;
+}
+
+.box-pg {
+    transform: translateY(-100px);
+    width: 300px;
+    position: fixed;
+    background-color: #3D3D45;
+    padding: 10px;
+    display: none;
+    z-index: 10;
+    border-radius: 2px;
+    box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.2);
+}
+.head-pg-span{
+    padding: 13px;
+}
+.box-pg input {
+    background: none;
+    outline: none;
+    margin: 2px;
+    padding: 2px 2px;
+    width: 100%;
+    border: 1px solid white;
+    color: white;
+    text-align: center;
+}
+
+.box-pg select {
+    outline: none;
+    width: 100%;
+    text-align: center;
+}
+
+.box-pg button {
+    outline: none;
+    width: 100%;
+    border: none;
+    margin-left: 2px;
+    color: white;
+    border-radius: 2px;
+    padding: 5px 0px;
+}
+
+.box-pg .accept {
+    background-color: #248046;
+}
+
+.box-pg .cancel {
+    background-color: #DA373C;
+}
+
+.box-pg button:hover {
+    filter: brightness(1.1);
 }

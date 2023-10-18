@@ -21,7 +21,14 @@ export const showToastInfo = (msg) => {
         toast.remove();
     }, 2000);
 }
-
+export const setVisible = (documentId, params) => {
+    const doc = document.querySelector(documentId);
+    doc.style.display = params ? 'block' : 'none';
+}
+export const setVisible2 = (documentId, params) => {
+    const doc = document.querySelector(documentId);
+    doc.style.display = params ? 'flex' : 'none';
+}
 export const openAcordeon = (documentId) => {
     const doc = document.querySelector(documentId);
     doc.classList.toggle('acordeon-open');
