@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from 'react'
 import { NavApp } from './NavApp';
 import { generatePdfSchedule } from '../utils/pdf/Schedule';
-import { closeModal, setVisible } from '../utils';
+import { closeModal, setVisible, showToastInfo } from '../utils';
+import axios from 'axios';
 
-export const ScheduleApp = ({ handleVisible }) => {
+export const ScheduleApp = ({ handleVisible, quotation }) => {
     const [payments, setPayments] = useState([]);
     const [van, setvan] = useState();
-    const generateSchedule = (numDues, loanAmount, fee, insure, risk, portes, cok) => {
-        let pays = [];
+    const generateSchedule = () => {
+        let { frecuencyPay, days_year, numDues, fee, insure, loanAmount, risk, portes, cok, gastAdm, comision } = quotation;
         let si = loanAmount;
-        cok = Math.pow(1 + (cok / 100), 30 / 360) - 1;
+        cok = Math.pow(1 + (cok / 100), frecuencyPay / days_year) - 1;
         let sum = 0;
+        let pays = [];
         for (let index = 0; index < numDues; index++) {
             let tep = Math.pow(1 + (fee / 100), 30 / 360) - 1;
             let interes = tep + (insure / 100);
@@ -20,9 +22,8 @@ export const ScheduleApp = ({ handleVisible }) => {
             let a = cuota - i - segDes;
             let sf = si - a;
             let pp = 0;
-            let comision = 0;
             let adminExpense = 0;
-            let flujo = cuota + pp + portes + comision + adminExpense + risk;
+            let flujo = cuota + pp + portes + comision + adminExpense + risk + gastAdm;
             sum += (flujo / Math.pow(1 + cok, index + 1));
             pays.push({
                 n: index + 1,
@@ -36,9 +37,9 @@ export const ScheduleApp = ({ handleVisible }) => {
                 pp: 0,
                 segDes,
                 segRis: risk,
-                comision: 0,
+                comision,
                 portes: portes,
-                gastAdm: 0,
+                gastAdm,
                 sf,
                 flujo,
             });
@@ -47,6 +48,11 @@ export const ScheduleApp = ({ handleVisible }) => {
         setvan(sum);
         setPayments(pays);
     }
+    useEffect(() => {
+        if (quotation) {
+            generateSchedule();
+        }
+    }, [quotation])
     const handleTeaChange = (value, index, key, min = 0, max = 0) => {
         const updatedPayments = [...payments];
         if (min == 0 && max == 0) updatedPayments[index][key] = value;
@@ -113,6 +119,7 @@ export const ScheduleApp = ({ handleVisible }) => {
         let value = document.querySelector('#select_tea').value;
         let _min = document.querySelector('#inp_min');
         let _max = document.querySelector('#inp_max');
+        if (_min.value == '' || _max.value == '') return;
         let min = parseInt(_min.value);
         let max = parseInt(_max.value);
         if (min >= max || min < 0 || max < 0 || max > numDues) return;
@@ -121,9 +128,15 @@ export const ScheduleApp = ({ handleVisible }) => {
         _min.value = '';
         _max.value = ''
     }
-    useEffect(() => {
-        generateSchedule(180, 148530, 10, 0.05, 46.25, 3.5, 25);
-    }, [])
+    const submitGenerateQuotation = async () => {
+        axios.post('http://localhost:4000/quotation/add', quotation)
+            .then(r => {
+                showToastInfo('Registró exitoso');
+            })
+            .catch(error => {
+                showToastInfo('Error')
+            })
+    }
     return (
         <>
             <br />
@@ -132,7 +145,7 @@ export const ScheduleApp = ({ handleVisible }) => {
                     <i className="fa-solid fa-backward icon" onClick={() => handleVisible()}></i>
                     <h4 className='ml-3'>Cronograma de Pagos</h4>
                 </div>
-                <button className='btn btn-info' onClick={() => generatePdfSchedule(payments, 148530)}>GENERAR PLAN DE PAGOS</button>
+                <button className='btn btn-info' onClick={() => submitGenerateQuotation()}>GENERAR PLAN DE PAGOS</button>
             </div>
             <hr />
             <div className="row">
@@ -202,7 +215,7 @@ export const ScheduleApp = ({ handleVisible }) => {
                         <tr>
                             <td>0</td>
                             <td colSpan={14}></td>
-                            <td>{148530}</td>
+                            <td>{quotation && quotation.loan_amount}</td>
                         </tr>
                         {
                             payments.map(pay => (

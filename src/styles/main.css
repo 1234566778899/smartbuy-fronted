@@ -176,14 +176,17 @@
 .icono-close:hover {
     filter: brightness(1.1);
 }
-.icon{
+
+.icon {
     font-size: 30px;
     color: black;
     cursor: pointer;
 }
-.icon:hover{
+
+.icon:hover {
     color: rgb(55, 55, 55);
 }
+
 .info-toast {
     padding: 20px 0px;
     text-align: center;
@@ -389,4 +392,33 @@
 
 .table-customer td {
     padding: 5px 0px;
+}
+
+.table-crud-quotation table {
+    box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    width: 100%;
+}
+
+.table-crud-quotation td,
+th {
+    padding: 10px 0px;
+}
+
+.table-crud-quotation tr {
+    border-bottom: 1px solid rgb(236, 236, 236);
+}
+
+.table-crud-quotation button {
+    border: none;
+    background: none;
+    background-color: #1F9BCF;
+    padding: 8px 7px;
+    color: white;
+    outline: none;
+}
+
+.table-crud-quotation button:hover {
+    background-color: #1A82AE;
+
 }
