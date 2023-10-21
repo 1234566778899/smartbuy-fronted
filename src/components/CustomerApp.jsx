@@ -2,11 +2,14 @@ import React, { useEffect, useState } from 'react'
 import { NavApp } from './NavApp'
 import { useForm } from 'react-hook-form'
 import axios from 'axios';
-import { closeModal, openModal, showToastInfo } from '../utils';
+import { closeModal, openModal, setVisible, showToastInfo } from '../utils';
+import { EditCustomerApp } from './EditCustomerApp';
 
 export const CustomerApp = () => {
     const { register, handleSubmit, formState: { errors }, reset } = useForm();
     const [users, setUsers] = useState([]);
+    const [usersFiltered, setUsersFiltered] = useState([])
+    const [userSelected, setUserSelected] = useState(null);
     const addCustomer = (data) => {
         axios.post('http://localhost:4000/user/add', { ...data, monthly_income: parseFloat(data.monthly_income) })
             .then(r => {
@@ -20,6 +23,7 @@ export const CustomerApp = () => {
         axios.get('http://localhost:4000/user/list')
             .then(res => {
                 setUsers(res.data);
+                setUsersFiltered(res.data);
                 reset();
             })
             .catch(error => console.log(error));
@@ -33,16 +37,20 @@ export const CustomerApp = () => {
             })
             .catch(error => console.log(error));
     }
+    const searchCustomers = (param) => {
+        param = param.toLowerCase();
+        setUsersFiltered(users.filter(u => u.name.toLowerCase().includes(param) || u.dni.toLowerCase().includes(param) || u.lname.toLowerCase().includes(param)));
+    }
     useEffect(() => {
-
         getCustomers();
     }, [])
     return (
         <>
             <NavApp logged={true} />
+            {userSelected && <EditCustomerApp customer={userSelected} setUser={setUserSelected} getCustomers={getCustomers} />}
             <div className="container">
                 <br />
-                <h2>Clientes</h2>
+                <h4>Clientes</h4>
                 <hr />
                 <div className="row">
 
@@ -52,7 +60,7 @@ export const CustomerApp = () => {
                         </div>
                         <div className="form-group">
                             <label >Buscar cliente</label>
-                            <input type="text" className='form-control bg-white' placeholder='Nombre del cliente..' />
+                            <input type="text" className='form-control bg-white' placeholder='Nombre del cliente..' onChange={(e) => searchCustomers(e.target.value)} />
                         </div>
                         <div className='table-customer'>
                             <table className='text-center bg-white'>
@@ -68,7 +76,7 @@ export const CustomerApp = () => {
                                 </thead>
                                 <tbody>
                                     {
-                                        users.map((user, i) => (
+                                        usersFiltered.map((user, i) => (
                                             <tr key={user._id}>
                                                 <td>{i + 1}</td>
                                                 <td>{user.dni}</td>
@@ -76,15 +84,18 @@ export const CustomerApp = () => {
                                                 <td>{user.lname}</td>
                                                 <td>S/. {user.monthly_income}</td>
                                                 <td className='text-center'>
-                                                    <button className='btn btn-info'>
-                                                        <i class="fa-solid fa-user-pen"></i></button>
-                                                    <button className='btn btn-danger ml-1' onClick={() => deleteCustomer(user._id)}><i class="fa-solid fa-user-minus"></i></button>
+                                                    <button className='btn btn-info' onClick={() => {
+                                                        setUserSelected(user);
+                                                    }}>
+                                                        <i className="fa-solid fa-user-pen"></i></button>
+                                                    <button className='btn btn-danger ml-1' onClick={() => deleteCustomer(user._id)}><i className="fa-solid fa-user-minus"></i></button>
                                                 </td>
                                             </tr>
                                         ))
                                     }
                                 </tbody>
                             </table>
+
                         </div>
                     </div>
                 </div>
@@ -111,7 +122,7 @@ export const CustomerApp = () => {
                         </div>
                         <div className='form-group'>
                             <label className='form-label'>Ingreso mensual</label>
-                            <input {...register('monthly_income', { required: true, valueAsNumber: true })} type="text" className='form-control' placeholder='S/ 00.00' />
+                            <input {...register('monthly_income', { required: true, valueAsNumber: true })} type="number" step={0.00001} className='form-control' placeholder='S/ 00.00' />
                         </div>
                         <button className='btn btn-success mt-2 w-100' type='submit'>Guardar</button>
                     </form>

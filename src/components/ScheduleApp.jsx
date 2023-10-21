@@ -1,29 +1,50 @@
 import React, { useEffect, useState } from 'react'
 import { NavApp } from './NavApp';
 import { generatePdfSchedule } from '../utils/pdf/Schedule';
-import { closeModal, setVisible, showToastInfo } from '../utils';
+import { FUNC_TIR, closeModal, setVisible, showToastInfo } from '../utils';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { Finance } from 'financejs';
 
 export const ScheduleApp = ({ handleVisible, quotation }) => {
     const [payments, setPayments] = useState([]);
+    const navigate = useNavigate();
+    const [interes, setinteres] = useState(0);
+    const [amortizacion, setAmortizacion] = useState(0);
+    const [segDes, setSegDes] = useState(0);
+    const [segRisk, setSegRisk] = useState(0);
+    const [comi, setcomi] = useState(0);
+    const [Portes, setPortes] = useState(0);
+    const [tir, settir] = useState(0);
+    const [tasaDes, settasaDes] = useState(0);
+    const [TCEA, setTCEA] = useState();
     const [van, setvan] = useState();
     const generateSchedule = () => {
-        let { frecuencyPay, days_year, numDues, fee, insure, loanAmount, risk, portes, cok, gastAdm, comision } = quotation;
+        let { frecuencyPay, daysYear, numDues, fee, insure, loanAmount, risk, portes, cok, gastAdm, comision } = quotation;
         let si = loanAmount;
-        cok = Math.pow(1 + (cok / 100), frecuencyPay / days_year) - 1;
+        cok = Math.pow(1 + (cok / 100), frecuencyPay / daysYear) - 1;
         let sum = 0;
         let pays = [];
+        let flows = [-loanAmount];
+        settasaDes(cok);
+        let totalCuota = 0, totalAmort = 0, totalDes = 0, totalRisk = 0, totalComis = 0, totalPortes = 0;
         for (let index = 0; index < numDues; index++) {
             let tep = Math.pow(1 + (fee / 100), 30 / 360) - 1;
             let interes = tep + (insure / 100);
             let cuota = loanAmount * ((interes * Math.pow(1 + interes, numDues)) / (Math.pow(1 + interes, numDues) - 1));
             let i = si * (Math.pow(1 + (fee / 100), 30 / 360) - 1);
+            totalCuota += cuota;
             let segDes = (insure / 100) * si;
+            totalDes += segDes;
+            totalRisk += risk;
+            totalComis += comision;
+            totalPortes += (portes + gastAdm);
             let a = cuota - i - segDes;
+            totalAmort += a;
             let sf = si - a;
-            let pp = 0;
             let adminExpense = 0;
-            let flujo = cuota + pp + portes + comision + adminExpense + risk + gastAdm;
+            let flujo = cuota + portes + comision + adminExpense + risk + gastAdm;
+            flows.push(flujo);
             sum += (flujo / Math.pow(1 + cok, index + 1));
             pays.push({
                 n: index + 1,
@@ -34,7 +55,6 @@ export const ScheduleApp = ({ handleVisible, quotation }) => {
                 i,
                 cuota,
                 a,
-                pp: 0,
                 segDes,
                 segRis: risk,
                 comision,
@@ -45,7 +65,17 @@ export const ScheduleApp = ({ handleVisible, quotation }) => {
             });
             si = sf;
         }
-        setvan(sum);
+        setinteres(totalCuota - totalAmort - totalDes);
+        setAmortizacion(totalAmort);
+        setSegDes(totalDes);
+        setSegRisk(totalRisk);
+        setcomi(totalComis);
+        setPortes(totalPortes);
+        setvan(loanAmount - sum);
+        let finance = new Finance();
+        const tir_founded = finance.IRR(...flows);
+        settir(tir_founded);
+        setTCEA(Math.pow(1 + (tir_founded / 100), daysYear / frecuencyPay) - 1);
         setPayments(pays);
     }
     useEffect(() => {
@@ -65,7 +95,10 @@ export const ScheduleApp = ({ handleVisible, quotation }) => {
             setPayments(updatedPayments);
             return;
         }
-        let loanAmount = 148530, insure = 0.05, numDues = 180;
+        let { numDues, insure, loanAmount, risk, comision, portes, gastAdm, frecuencyPay, daysYear, cok } = quotation;
+        cok = Math.pow(1 + (cok / 100), frecuencyPay / daysYear) - 1;
+        let sum = 0, totalCuota = 0, totalAmort = 0, totalDes = 0, totalRisk = 0, totalComis = 0, totalPortes = 0;
+        let flows = [-loanAmount];
         let si = loanAmount;
         for (let index = 0; index < updatedPayments.length; index++) {
             let pay = updatedPayments[index];
@@ -75,23 +108,30 @@ export const ScheduleApp = ({ handleVisible, quotation }) => {
             let cuota = 0;
             let i = si * (Math.pow(1 + (fee / 100), 30 / 360) - 1);
             let segDes = (insure / 100) * si;
+            totalDes += segDes;
+            totalRisk += risk;
+            totalComis += comision;
+            totalPortes += (portes + gastAdm);
             let a = 0;
             let sf = 0;
             let flujo = 0;
-            let pp = 0;
             if (pay.pg == 'S') {
                 cuota = si * ((interes * Math.pow(1 + interes, numDues - index)) / (Math.pow(1 + interes, numDues - index) - 1));
                 a = cuota - i - segDes;
                 sf = si - a;
-                flujo = cuota + pay.pp + pay.portes + pay.comision + pay.gastAdm + pay.segRis;
+                flujo = cuota + pay.portes + pay.comision + pay.gastAdm + pay.segRis;
             } else if (pay.pg == 'T') {
                 sf = i + si;
-                flujo = cuota + pay.pp + pay.portes + pay.comision + pay.gastAdm + pay.segRis + segDes;
+                flujo = cuota + pay.portes + pay.comision + pay.gastAdm + pay.segRis + segDes;
             } else {
                 cuota = i;
-                sf = si - a - pp;
-                flujo = cuota + pay.pp + pay.portes + pay.comision + pay.gastAdm + pay.segRis + segDes;
+                sf = si - a;
+                flujo = cuota + pay.portes + pay.comision + pay.gastAdm + pay.segRis + segDes;
             }
+            sum += (flujo / Math.pow(1 + cok, index + 1));
+            totalCuota += cuota;
+            totalAmort += a;
+            flows.push(flujo);
             updatedPayments[index] = {
                 n: index + 1,
                 tea: fee,
@@ -101,7 +141,6 @@ export const ScheduleApp = ({ handleVisible, quotation }) => {
                 i,
                 cuota,
                 a,
-                pp: 0,
                 segDes,
                 segRis: pay.segRis,
                 comision: 0,
@@ -112,6 +151,17 @@ export const ScheduleApp = ({ handleVisible, quotation }) => {
             };
             si = sf;
         }
+        setinteres(totalCuota - totalAmort - totalDes);
+        setAmortizacion(totalAmort);
+        setSegDes(totalDes);
+        setSegRisk(totalRisk);
+        setcomi(totalComis);
+        setPortes(totalPortes);
+        setvan(loanAmount - sum);
+        let finance = new Finance();
+        const tir_founded = finance.IRR(...flows);
+        settir(tir_founded);
+        setTCEA(Math.pow(1 + (tir_founded / 100), daysYear / frecuencyPay) - 1);
         setPayments(updatedPayments);
     };
     const changeManyTea = () => {
@@ -129,9 +179,11 @@ export const ScheduleApp = ({ handleVisible, quotation }) => {
         _max.value = ''
     }
     const submitGenerateQuotation = async () => {
-        axios.post('http://localhost:4000/quotation/add', quotation)
+        axios.post('http://localhost:4000/quotation/add', { ...quotation, flows: payments })
             .then(r => {
                 showToastInfo('Registró exitoso');
+                navigate('/quotation');
+                generatePdfSchedule(payments, quotation.loanAmount);
             })
             .catch(error => {
                 showToastInfo('Error')
@@ -153,16 +205,46 @@ export const ScheduleApp = ({ handleVisible, quotation }) => {
                     <table className='table-cost w-100'>
                         <tbody>
                             <tr>
-                                <td>Tasa de Descuento</td>
-                                <td>1.87693%</td>
+                                <td>Intereses</td>
+                                <td>{interes.toFixed(2)}</td>
+                            </tr>
+                            <tr>
+                                <td>Amortización del capital</td>
+                                <td>{amortizacion.toFixed(2)}</td>
+                            </tr>
+                            <tr>
+                                <td>Seguro de desgravamen</td>
+                                <td>{segDes.toFixed(2)}</td>
+                            </tr>
+                            <tr>
+                                <td>Seguro contra todo riesgo</td>
+                                <td>{segRisk.toFixed(2)}</td>
+                            </tr>
+                            <tr>
+                                <td>Comisiones periodicas</td>
+                                <td>{comi.toFixed(2)}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div className="col-md-6">
+                    <table className='table-cost w-100'>
+                        <tbody>
+                            <tr>
+                                <td>Portes / Gastos de adm.</td>
+                                <td>{Portes.toFixed(2)}</td>
+                            </tr>
+                            <tr>
+                                <td>Tasa de Descuento (COK)</td>
+                                <td>{(tasaDes * 100).toFixed(5)}%</td>
                             </tr>
                             <tr>
                                 <td>TIR de la operación</td>
-                                <td>0.89251%</td>
+                                <td>{tir}%</td>
                             </tr>
                             <tr>
                                 <td>TCEA de la operación</td>
-                                <td>11.25181%</td>
+                                <td>{(TCEA * 100).toFixed(2)}%</td>
                             </tr>
                             <tr>
                                 <td>VAN operación</td>
@@ -171,6 +253,7 @@ export const ScheduleApp = ({ handleVisible, quotation }) => {
                         </tbody>
                     </table>
                 </div>
+
             </div>
             <br />
             <div className="table-schedule">
@@ -201,7 +284,6 @@ export const ScheduleApp = ({ handleVisible, quotation }) => {
                             <th>Interés</th>
                             <th>Cuota</th>
                             <th>Amort.</th>
-                            <th>Prepago</th>
                             <th>Seguro  desgrav</th>
                             <th>Seguro de riesgo</th>
                             <th>Comisión</th>
@@ -214,8 +296,8 @@ export const ScheduleApp = ({ handleVisible, quotation }) => {
                     <tbody>
                         <tr>
                             <td>0</td>
-                            <td colSpan={14}></td>
-                            <td>{quotation && quotation.loan_amount}</td>
+                            <td colSpan={13}></td>
+                            <td>{quotation && quotation.loanAmount}</td>
                         </tr>
                         {
                             payments.map(pay => (
@@ -234,12 +316,11 @@ export const ScheduleApp = ({ handleVisible, quotation }) => {
                                     <td>{pay.i.toFixed(2)}</td>
                                     <td>{pay.cuota.toFixed(2)}</td>
                                     <td>{pay.a.toFixed(2)}</td>
-                                    <td>{pay.pp}</td>
                                     <td>{pay.segDes.toFixed(2)}</td>
                                     <td>{pay.segRis.toFixed(2)}</td>
                                     <td>{pay.segRis}</td>
                                     <td>{pay.portes}</td>
-                                    <td>{pay.gastAdm}</td>
+                                    <td>{pay.gastAdm.toFixed(2)}</td>
                                     <td>{pay.sf.toFixed(2)}</td>
                                     <td>{pay.flujo.toFixed(2)}</td>
                                 </tr>

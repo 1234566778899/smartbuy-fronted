@@ -41,14 +41,14 @@ export const AddQuotationApp = () => {
             fee: parseFloat(data.fee),
             insure: parseFloat(data.credit_life_insurence),
             loanAmount,
-            risk: parseFloat(data.risk_insurence) || 0,
+            risk: riskInsure,
             portes: parseFloat(data.shipping) || 0,
             cok: parseFloat(data.cok) || 0,
             gastAdm: parseFloat(data.administration_expenses) || 0,
             comision: parseFloat(data.periodic_commission) || 0,
-            currency: data.currency
+            currency: data.currency,
+            daysYear: parseFloat(data.days_year)
         }
-        console.log(quatotationData);
         setquotation(quatotationData);
         setVisible('#box_add_datatation', false);
         setVisible('#box_schedule', true);
@@ -91,7 +91,7 @@ export const AddQuotationApp = () => {
                 </div>
                 <div id="box_add_datatation">
                     <br />
-                    <h3>GENERAR COTIZACIÓN</h3>
+                    <h4>GENERAR COTIZACIÓN</h4>
                     <hr />
                     <br />
                     <form className="row" onSubmit={handleSubmit(submitSchedule)}>
@@ -118,7 +118,7 @@ export const AddQuotationApp = () => {
                                         <option value="efectiva">Efectiva</option>
                                         <option value="nominal">Nominal</option>
                                     </select>
-                                    <input type="text" className='form-control bg-white ml-1' placeholder='25.5%' {...register('cok',{required:true})} />
+                                    <input type="number" step={0.00001} className='form-control bg-white ml-1' placeholder='25.5%' {...register('cok', { required: true, type: 'number' })} />
                                 </div>
                             </div>
                         </div>
@@ -129,7 +129,6 @@ export const AddQuotationApp = () => {
                             <span className='form-label mt-2'>Precio de venta del Vehículo</span>
                             <input
                                 value={car ? car.price.toLocaleString(undefined, { style: 'currency', currency: 'USD' }) : ''}
-                                type="text"
                                 className="form-control"
                                 readOnly
                                 onFocus={() => openModal('#find_car')}
@@ -149,16 +148,16 @@ export const AddQuotationApp = () => {
                                         <option value="nominal">Nominal</option>
                                         <option value="descuento">Descuento</option>
                                     </select>
-                                    <input type="text" className='form-control bg-white ml-1' placeholder='25.5%' {...register('fee', { required: true })} />
+                                    <input type="number" step={0.00001} className='form-control bg-white ml-1' placeholder='25.5%' {...register('fee', { required: true })} />
                                 </div>
                             </div>
                             <div className="form-group mt-2">
                                 <span className='form-label'>Número de años</span>
-                                <input type="text" className="form-control bg-white" {...register('num_years', { required: true })} />
+                                <input type="number" step={0.00001} className="form-control bg-white" {...register('num_years', { required: true })} />
                             </div>
                             <div className="form-group mt-2">
                                 <span className='form-label'>Frecuencia de pago</span>
-                                <input type="text" className="form-control bg-white" {...register('frecuency_pay', { required: true })} />
+                                <input type="number" step={0.00001} className="form-control bg-white" {...register('frecuency_pay', { required: true })} />
                             </div>
                             <div className="form-group mt-2">
                                 <span className='form-label'>N° de dias al año</span>
@@ -175,23 +174,23 @@ export const AddQuotationApp = () => {
                             <hr />
                             <div className="form-group mt-2">
                                 <span className='form-label'>Costos notariales</span>
-                                <input type="text" className="form-control bg-white" {...register('notarial_cost')} />
+                                <input type="number" step={0.00001} className="form-control bg-white" {...register('notarial_cost')} />
                             </div>
                             <div className="form-group mt-2">
                                 <span className='form-label'>Costos registrales</span>
-                                <input type="text" className="form-control bg-white" {...register('registration_cost')} />
+                                <input type="number" step={0.00001} className="form-control bg-white" {...register('registration_cost')} />
                             </div>
                             <div className="form-group mt-2">
                                 <span className='form-label'>Tasación</span>
-                                <input type="text" className="form-control bg-white" {...register('appraisal')} />
+                                <input type="number" step={0.00001} className="form-control bg-white" {...register('appraisal')} />
                             </div>
                             <div className="form-group mt-2">
                                 <span className='form-label'>Comisión de estudio</span>
-                                <input type="text" className="form-control bg-white" {...register('study_fee')} />
+                                <input type="number" step={0.00001} className="form-control bg-white" {...register('study_fee')} />
                             </div>
                             <div className="form-group mt-2">
                                 <span className='form-label'>Comisión de activación</span>
-                                <input type="text" className="form-control bg-white" {...register('activation_fee')} />
+                                <input type="number" step={0.00001} className="form-control bg-white" {...register('activation_fee')} />
                             </div>
                         </div>
                         <div className="col-md-12">
@@ -202,25 +201,25 @@ export const AddQuotationApp = () => {
 
                             <div className="form-group">
                                 <span className='form-label'>Comisión periodica</span>
-                                <input type="text" className='form-control bg-white' placeholder='0.0502%' {...register('periodic_commission')} />
+                                <input type="number" step={0.00001} className='form-control bg-white' placeholder='0.0502%' {...register('periodic_commission')} />
                             </div>
                             <div className="form-group">
                                 <span className='form-label'>Portes</span>
-                                <input type="text" className='form-control bg-white' placeholder='0.0502%' {...register('shipping')} />
+                                <input type="number" step={0.00001} className='form-control bg-white' placeholder='0.0502%' {...register('shipping')} />
                             </div>
                             <div className="form-group">
                                 <span className='form-label'>Gastos de administración</span>
-                                <input type="text" className='form-control bg-white' placeholder='0.0502%' {...register('administration_expenses')} />
+                                <input type="number" step={0.00001} className='form-control bg-white' placeholder='0.0502%' {...register('administration_expenses')} />
                             </div>
                         </div>
                         <div className="col-md-6">
                             <div className="form-group">
                                 <span className='form-label'>Seguro de desgravamen (%)</span>
-                                <input type="text" className='form-control bg-white' placeholder='0.0502%' {...register('credit_life_insurence')} />
+                                <input type="number" step={0.00001} className='form-control bg-white' placeholder='0.0502%' {...register('credit_life_insurence')} />
                             </div>
                             <div className="form-group">
                                 <span className='form-label'>Seguro de riesgo (%)</span>
-                                <input type="text" className='form-control bg-white' placeholder='0.0502%' {...register('risk_insurence')} />
+                                <input type="number" step={0.00001} className='form-control bg-white' placeholder='0.0502%' {...register('risk_insurence')} />
                             </div>
                         </div>
                         <div className="col-md-12 mt-3">
@@ -254,7 +253,7 @@ export const AddQuotationApp = () => {
                             </div>
                             <div className='form-group'>
                                 <span className='form-label'>Seguro riesgo</span>
-                                <input type="text" className='form-control bg-white' readOnly value={riskInsure} />
+                                <input type="text" className='form-control bg-white' readOnly value={riskInsure && riskInsure.toFixed(4)} />
                             </div>
                         </div>
                         <div className="col-md-12 text-center">

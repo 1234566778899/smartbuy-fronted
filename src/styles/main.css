@@ -103,9 +103,9 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-.car-box>img {
+.car-box img {
     height: 120px;
-    width: 190px;
+    width: 188px;
     object-fit: cover;
 }
 
@@ -134,8 +134,7 @@
 
 .car-box:hover {
     filter: brightness(1.05);
-    transform: translateY(-5px);
-    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgb(129, 129, 129);
 }
 
 .table-customer {
@@ -160,7 +159,27 @@
     align-items: center;
 }
 
+
 #add_customer>.box {
+    background-color: white;
+    padding: 15px;
+    width: 500px;
+}
+
+#edit_customer {
+    display: flex;
+    background-color: rgba(0, 0, 0, 0.2);
+    position: fixed;
+    z-index: 20;
+    right: 0px;
+    left: 0px;
+    top: 0px;
+    bottom: 0px;
+    justify-content: center;
+    align-items: center;
+}
+
+#edit_customer>.box {
     background-color: white;
     padding: 15px;
     width: 500px;
@@ -243,7 +262,7 @@
 }
 
 .acordeon-open {
-    max-height: 500px;
+    display: none;
 }
 
 .table-schedule {
@@ -262,8 +281,9 @@
     border-bottom: 1px solid #EBEBEB;
 }
 
+
 .table-schedule table tr th {
-    padding: 0px 5px;
+    padding: 10px 10px;
     border-bottom: 1px solid #EBEBEB;
 }
 
@@ -323,7 +343,7 @@
 .box-pg {
     transform: translateY(-100px);
     width: 300px;
-    position: fixed;
+    position: absolute;
     background-color: #3D3D45;
     padding: 10px;
     display: none;
@@ -394,6 +414,11 @@
     padding: 5px 0px;
 }
 
+.table-crud-quotation {
+    max-height: 600px;
+    overflow: auto;
+}
+
 .table-crud-quotation table {
     box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.2);
     text-align: center;
@@ -421,4 +446,108 @@ th {
 .table-crud-quotation button:hover {
     background-color: #1A82AE;
 
+}
+
+.car-selected {
+    filter: brightness(1.05);
+    border: 1px solid rgb(129, 129, 129);
+}
+
+.icon-currency {
+    margin-top: 5px;
+    margin-right: 5px;
+    font-size: 20px;
+}
+
+.login-box {
+    height: 100vh;
+    background-image: url('../assets/main.png');
+}
+
+.box-registro {
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 10px;
+    color: white;
+    border-radius: 5px;
+    box-shadow: 0px 3px 3px rgba(255, 255, 255, 0.2);
+}
+
+.box-registro h3 {
+    color: white;
+}
+
+.box-registro input {
+    outline: none;
+    width: 100%;
+    background: none;
+    border: 1px solid white;
+    padding: 7px;
+    color: white;
+    border-radius: 2px;
+}
+
+.box-login {
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 10px;
+    color: white;
+    border-radius: 5px;
+    box-shadow: 0px 3px 3px rgba(255, 255, 255, 0.2);
+}
+
+.box-login h3 {
+    color: white;
+}
+
+.box-login input {
+    outline: none;
+    width: 100%;
+    background: none;
+    border: 1px solid white;
+    padding: 7px;
+    color: white;
+    border-radius: 2px;
+}
+
+.tarjeta {
+    padding: 5px 25px;
+    display: inline-block;
+    background-color: white;
+    font-weight: 400;
+}
+
+.tarjeta>.name {
+    font-size: 13px;
+    color: #525252;
+}
+
+.tarjeta>.quantity {
+    font-weight: bold;
+    font-size: 26px;
+}
+
+.box-out {
+    display: none;
+    position: absolute;
+    width: 130px;
+    overflow: hidden;
+    background-color: white;
+    transform: translateX(15px);
+    box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.2);
+}
+
+.box-out .item {
+    padding: 10px 5px;
+    cursor: pointer;
+}
+
+.box-out .item:hover {
+    background-color: #1A82AE;
+    color: white;
+}
+
+.box-chart {
+    overflow-x: auto;
+}
+.form-search-quotation{
+    overflow-x: auto;
 }
