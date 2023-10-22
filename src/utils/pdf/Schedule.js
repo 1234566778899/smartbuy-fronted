@@ -216,7 +216,7 @@ export const generatePdfSchedule = (payments, quotation) => {
             [
                 {
                     content: 'Cronograma de pagos',
-                    colSpan: 12
+                    colSpan: 13
                 }
             ],
             [
