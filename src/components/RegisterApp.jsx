@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form'
 import { NavApp } from './NavApp';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { CONFI } from '../utils/config';
 
 export const RegisterApp = () => {
     const { register, handleSubmit, formState: { errors } } = useForm();
@@ -10,14 +11,14 @@ export const RegisterApp = () => {
     const [alert, setAlert] = useState(null)
 
     const submitRegister = (data) => {
-        axios.post('http://localhost:4000/user/register', data)
+        axios.post(`${CONFI.uri}/user/register`, data)
             .then(response => {
                 localStorage.setItem('id', response.data.id);
                 navigate('/dashboard');
                 localStorage.setItem('nav', 'dashboard');
             })
             .catch(error => {
-                setAlert(error.response.data.error||'Error');
+                setAlert(error.response.data.error || 'Error');
             })
     }
     return (

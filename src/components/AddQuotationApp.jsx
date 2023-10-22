@@ -4,11 +4,9 @@ import { FindCustomerApp } from './FindCustomerApp'
 import { openModal, setVisible, showToastInfo } from '../utils'
 import { FindCarApp } from './FindCarApp'
 import { useForm } from 'react-hook-form'
-import { useNavigate } from 'react-router-dom'
 import { ScheduleApp } from './ScheduleApp'
 
 export const AddQuotationApp = () => {
-    const navigate = useNavigate();
     const { register, handleSubmit, formState: { errors }, watch } = useForm({
         defaultValues: {
             notarial_cost: '150',
@@ -18,38 +16,52 @@ export const AddQuotationApp = () => {
             shipping: '3.5',
             credit_life_insurence: '0.05',
             risk_insurence: '0.3',
-            frecuency_pay: '30'
+            frecuency_pay: '30',
+            periodic_commission: '0',
+            administration_expenses: '0',
+            activation_fee: '0'
         }
     });
-    const [currency, setCurrency] = useState();
-    const [user, setuser] = useState();
-    const [car, setcar] = useState()
-    const [balanceFinance, setBalanceFinance] = useState()
-    const [loanAmount, setLoanAmount] = useState()
-    const [numberDuesYear, setNumberDuesYear] = useState()
-    const [totalDues, settotalDues] = useState()
-    const [insureDeduct, setInsureDeduct] = useState()
-    const [riskInsure, setRiskInsure] = useState()
+
+    const [user, setuser] = useState(null);
+    const [car, setcar] = useState(null)
+    const [balanceFinance, setBalanceFinance] = useState(0)
+    const [loanAmount, setLoanAmount] = useState(0)
+    const [numberDuesYear, setNumberDuesYear] = useState(0)
+    const [totalDues, settotalDues] = useState(0)
+    const [insureDeduct, setInsureDeduct] = useState(0)
+    const [riskInsure, setRiskInsure] = useState(0)
     const [quotation, setquotation] = useState(null);
+    const [initialCost, setinitialCost] = useState(0)
     const allForm = watch();
     const submitSchedule = (data) => {
-        if (!user || !car) return showToastInfo('Debe completar todos los campos');
+        if (!user) return showToastInfo('Debe seleccionar un cliente');
+        if (!car) return showToastInfo('Debe seleccionar un auto');
+
+        const daysYear = parseFloat(data.days_year);
+        const cok = data.cok_type === 'efectiva' ? parseFloat(data.cok) : (Math.pow(1 + ((parseFloat(data.cok) / 100) / 360), daysYear) - 1) * 100;
+        const fee = data.rate_type == 'efectiva' ? parseFloat(data.fee) : (Math.pow(1 + ((parseFloat(data.fee) / 100) / 360), daysYear) - 1) * 100;
         const quatotationData = {
             customer: user._id,
             frecuencyPay: parseInt(data.frecuency_pay),
             numDues: totalDues,
-            fee: parseFloat(data.fee),
+            fee,
             insure: parseFloat(data.credit_life_insurence),
             loanAmount,
             risk: riskInsure,
             portes: parseFloat(data.shipping) || 0,
-            cok: parseFloat(data.cok) || 0,
+            cok,
             gastAdm: parseFloat(data.administration_expenses) || 0,
             comision: parseFloat(data.periodic_commission) || 0,
             currency: data.currency,
-            daysYear: parseFloat(data.days_year)
+            daysYear,
+            initialDue: parseFloat(data.initial_due) * car.price / 100,
+            initialCost
+
+            //cok_type   (1+TEP/30)^12-1
+            //rate_type
         }
-        setquotation(quatotationData);
+        setquotation({ ...quatotationData, car, customer: user });
         setVisible('#box_add_datatation', false);
         setVisible('#box_schedule', true);
     }
@@ -63,16 +75,21 @@ export const AddQuotationApp = () => {
         const studyFee = parseFloat(allForm.study_fee) || 0;
         const activationFee = parseFloat(allForm.activation_fee) || 0;
         const total = notarialCost + registrationCost + appraisal + studyFee + activationFee;
+        setinitialCost(total);
         setLoanAmount(total + balanceFinance);
-        const numAnios = parseFloat(allForm.num_years) || 0;
-        const frecuencyPay = parseFloat(allForm.frecuency_pay) || 0;
-        const daysYear = parseFloat(allForm.days_year) || 0;
-        setNumberDuesYear(frecuencyPay && (daysYear / frecuencyPay));
-        settotalDues((daysYear / frecuencyPay) * numAnios);
+        const numAnios = parseInt(allForm.num_years) || 0;
+        const frecuencyPay = parseInt(allForm.frecuency_pay) || 0;
+        const daysYear = parseInt(allForm.days_year) || 0;
+        if (frecuencyPay > 0) {
+            setNumberDuesYear(frecuencyPay && (daysYear / frecuencyPay));
+            settotalDues((daysYear / frecuencyPay) * numAnios);
+        }
         const creditLifeEnsurence = parseFloat(allForm.credit_life_insurence) || 0;
         const riskEnsurence = parseFloat(allForm.risk_insurence) || 0;
         setInsureDeduct((creditLifeEnsurence) / 30 * frecuencyPay);
-        setRiskInsure((riskEnsurence / 100) * priceCar / numberDuesYear);
+        if (numberDuesYear) {
+            setRiskInsure((riskEnsurence / 100) * priceCar / numberDuesYear);
+        }
     }, [car, allForm])
 
 
@@ -98,11 +115,11 @@ export const AddQuotationApp = () => {
                         <div className="col-md-6">
                             <span className='form-label'>Cliente</span>
                             <div className="input-group">
-                                <input type="text" className='form-control' readOnly value={user ? `${user.name} ${user.lname} - ${user.dni}` : ''} onFocus={() => openModal('#find_customer')} />
+                                <input type="text" className='form-control' readOnly value={user ? `${user.name} ${user.lname} - ${user.documentNumber}` : ''} onFocus={() => openModal('#find_customer')} />
                             </div>
                             <div className="form-group mt-2">
                                 <span className='form-label'>Moneda</span>
-                                <select {...register('currency', { required: true })} className='form-control bg-white' {...register('currency')} onChange={(e) => setCurrency(e.target.value)}>
+                                <select {...register('currency', { required: true })} className='form-control bg-white'>
                                     <option value="PEN">Soles</option>
                                     <option value="USD">Dolares</option>
                                 </select>
@@ -112,13 +129,17 @@ export const AddQuotationApp = () => {
                             <h6 className="mt-4">Costo de oportunidad</h6>
                             <hr />
                             <div className="form-group">
-                                <span className='form-label'>Tasa</span>
+                                <span className='form-label'>Tasa (Anual)</span>
                                 <div className="input-group">
                                     <select className='form-control bg-white' {...register('cok_type', { required: true })}>
                                         <option value="efectiva">Efectiva</option>
                                         <option value="nominal">Nominal</option>
                                     </select>
-                                    <input type="number" step={0.00001} className='form-control bg-white ml-1' placeholder='25.5%' {...register('cok', { required: true, type: 'number' })} />
+                                    <input type="number" step={0.00001} className='form-control bg-white ml-1' placeholder='25.5%' {...register('cok', {
+                                        required: true, validate: {
+                                            positive: value => parseFloat(value) > 0 || 'Debe ser un número positivo',
+                                        }
+                                    })} />
                                 </div>
                             </div>
                         </div>
@@ -141,23 +162,30 @@ export const AddQuotationApp = () => {
                                 </select>
                             </div>
                             <div className="form-group mt-2">
-                                <span className='form-label'>Tasa de interés</span>
+                                <span className='form-label'>Tasa de interés (Anual)</span>
                                 <div className="input-group">
                                     <select className='form-control bg-white' {...register('rate_type', { required: true })}>
                                         <option value="efectiva">Efectiva</option>
                                         <option value="nominal">Nominal</option>
-                                        <option value="descuento">Descuento</option>
                                     </select>
-                                    <input type="number" step={0.00001} className='form-control bg-white ml-1' placeholder='25.5%' {...register('fee', { required: true })} />
+                                    <input type="number" step={0.00001} className='form-control bg-white ml-1' placeholder='25.5%' {...register('fee', {
+                                        required: true, validate: {
+                                            positive: value => parseFloat(value) > 0 || 'Debe ser un número positivo',
+                                        }
+                                    })} />
                                 </div>
                             </div>
                             <div className="form-group mt-2">
                                 <span className='form-label'>Número de años</span>
-                                <input type="number" step={0.00001} className="form-control bg-white" {...register('num_years', { required: true })} />
+                                <input type="number" className="form-control bg-white" {...register('num_years', {
+                                    required: true, validate: {
+                                        positive: value => parseFloat(value) > 0 || 'Debe ser un número positivo',
+                                    }
+                                })} />
                             </div>
                             <div className="form-group mt-2">
                                 <span className='form-label'>Frecuencia de pago</span>
-                                <input type="number" step={0.00001} className="form-control bg-white" {...register('frecuency_pay', { required: true })} />
+                                <input type="number" className="form-control bg-white" {...register('frecuency_pay')} readOnly />
                             </div>
                             <div className="form-group mt-2">
                                 <span className='form-label'>N° de dias al año</span>
@@ -174,23 +202,43 @@ export const AddQuotationApp = () => {
                             <hr />
                             <div className="form-group mt-2">
                                 <span className='form-label'>Costos notariales</span>
-                                <input type="number" step={0.00001} className="form-control bg-white" {...register('notarial_cost')} />
+                                <input type="number" step={0.00001} className="form-control bg-white" {...register('notarial_cost', {
+                                    validate: {
+                                        positive: value => parseFloat(value) >= 0 || 'Debe ser un número positivo',
+                                    }
+                                })} />
                             </div>
                             <div className="form-group mt-2">
                                 <span className='form-label'>Costos registrales</span>
-                                <input type="number" step={0.00001} className="form-control bg-white" {...register('registration_cost')} />
+                                <input type="number" step={0.00001} className="form-control bg-white" {...register('registration_cost', {
+                                    validate: {
+                                        positive: value => parseFloat(value) >= 0 || 'Debe ser un número positivo',
+                                    }
+                                })} />
                             </div>
                             <div className="form-group mt-2">
                                 <span className='form-label'>Tasación</span>
-                                <input type="number" step={0.00001} className="form-control bg-white" {...register('appraisal')} />
+                                <input type="number" step={0.00001} className="form-control bg-white" {...register('appraisal', {
+                                    validate: {
+                                        positive: value => parseFloat(value) >= 0 || 'Debe ser un número positivo',
+                                    }
+                                })} />
                             </div>
                             <div className="form-group mt-2">
                                 <span className='form-label'>Comisión de estudio</span>
-                                <input type="number" step={0.00001} className="form-control bg-white" {...register('study_fee')} />
+                                <input type="number" step={0.00001} className="form-control bg-white" {...register('study_fee', {
+                                    validate: {
+                                        positive: value => parseFloat(value) >= 0 || 'Debe ser un número positivo',
+                                    }
+                                })} />
                             </div>
                             <div className="form-group mt-2">
                                 <span className='form-label'>Comisión de activación</span>
-                                <input type="number" step={0.00001} className="form-control bg-white" {...register('activation_fee')} />
+                                <input type="number" step={0.00001} className="form-control bg-white" {...register('activation_fee', {
+                                    validate: {
+                                        positive: value => parseFloat(value) >= 0 || 'Debe ser un número positivo',
+                                    }
+                                })} />
                             </div>
                         </div>
                         <div className="col-md-12">
@@ -201,25 +249,45 @@ export const AddQuotationApp = () => {
 
                             <div className="form-group">
                                 <span className='form-label'>Comisión periodica</span>
-                                <input type="number" step={0.00001} className='form-control bg-white' placeholder='0.0502%' {...register('periodic_commission')} />
+                                <input type="number" step={0.00001} className='form-control bg-white' placeholder='0.0502%' {...register('periodic_commission', {
+                                    validate: {
+                                        positive: value => parseFloat(value) >= 0 || 'Debe ser un número positivo',
+                                    }
+                                })} />
                             </div>
                             <div className="form-group">
                                 <span className='form-label'>Portes</span>
-                                <input type="number" step={0.00001} className='form-control bg-white' placeholder='0.0502%' {...register('shipping')} />
+                                <input type="number" step={0.00001} className='form-control bg-white' placeholder='0.0502%' {...register('shipping', {
+                                    validate: {
+                                        positive: value => parseFloat(value) >= 0 || 'Debe ser un número positivo',
+                                    }
+                                })} />
                             </div>
                             <div className="form-group">
                                 <span className='form-label'>Gastos de administración</span>
-                                <input type="number" step={0.00001} className='form-control bg-white' placeholder='0.0502%' {...register('administration_expenses')} />
+                                <input type="number" step={0.00001} className='form-control bg-white' placeholder='0..' {...register('administration_expenses', {
+                                    validate: {
+                                        positive: value => parseFloat(value) >= 0 || 'Debe ser un número positivo',
+                                    }
+                                })} />
                             </div>
                         </div>
                         <div className="col-md-6">
                             <div className="form-group">
                                 <span className='form-label'>Seguro de desgravamen (%)</span>
-                                <input type="number" step={0.00001} className='form-control bg-white' placeholder='0.0502%' {...register('credit_life_insurence')} />
+                                <input type="number" step={0.00001} className='form-control bg-white' placeholder='0.0502%' {...register('credit_life_insurence', {
+                                    validate: {
+                                        positive: value => parseFloat(value) >= 0 || 'Debe ser un número positivo',
+                                    }
+                                })} />
                             </div>
                             <div className="form-group">
                                 <span className='form-label'>Seguro de riesgo (%)</span>
-                                <input type="number" step={0.00001} className='form-control bg-white' placeholder='0.0502%' {...register('risk_insurence')} />
+                                <input type="number" step={0.00001} className='form-control bg-white' placeholder='0.0502%' {...register('risk_insurence', {
+                                    validate: {
+                                        positive: value => parseFloat(value) >= 0 || 'Debe ser un número positivo',
+                                    }
+                                })} />
                             </div>
                         </div>
                         <div className="col-md-12 mt-3">

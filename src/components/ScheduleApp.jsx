@@ -5,6 +5,7 @@ import { FUNC_TIR, closeModal, setVisible, showToastInfo } from '../utils';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Finance } from 'financejs';
+import { CONFI } from '../utils/config';
 
 export const ScheduleApp = ({ handleVisible, quotation }) => {
     const [payments, setPayments] = useState([]);
@@ -179,13 +180,15 @@ export const ScheduleApp = ({ handleVisible, quotation }) => {
         _max.value = ''
     }
     const submitGenerateQuotation = async () => {
-        axios.post('http://localhost:4000/quotation/add', { ...quotation, flows: payments })
+        const newCuotation = { ...quotation, totalInterest: interes, totalAmort: amortizacion, totalSegDes: segDes, totalRisk: segRisk, totalComi: comi, totalPortes: Portes, tir, tasaDes, TCEA, van }
+        axios.post(`${CONFI.uri}/quotation/add`, { ...newCuotation, flows: payments })
             .then(r => {
                 showToastInfo('Registró exitoso');
+                generatePdfSchedule(payments, newCuotation);
                 navigate('/quotation');
-                generatePdfSchedule(payments, quotation.loanAmount);
             })
             .catch(error => {
+                console.log(error);
                 showToastInfo('Error')
             })
     }
@@ -261,7 +264,7 @@ export const ScheduleApp = ({ handleVisible, quotation }) => {
                     <thead>
                         <tr>
                             <th style={{ width: '10px' }}>N°</th>
-                            <th style={{ width: '50px' }}>TEA</th>
+                            <th style={{ width: '60px' }}>TEA</th>
                             <th style={{ width: '100px' }}>TEM</th>
                             <th className='head-pg'><span className='head-pg-span' onClick={() => setVisible('#box_pg', true)}>PG</span>
                                 <div className='box-pg' id='box_pg'>
@@ -303,7 +306,7 @@ export const ScheduleApp = ({ handleVisible, quotation }) => {
                             payments.map(pay => (
                                 <tr key={pay.n}>
                                     <td>{pay.n}</td>
-                                    <td><input onChange={(e) => handleTeaChange(e.target.value, pay.n - 1, 'tea')} className='cell-tea' type="text" value={pay.tea.toString()} /> %</td>
+                                    <td><input onChange={(e) => handleTeaChange(e.target.value, pay.n - 1, 'tea')} className='cell-tea' type="text" value={pay.tea ? pay.tea : ''} /> %</td>
                                     <td>{pay.tep.toFixed(5)} %</td>
                                     <td>
                                         <select value={pay.pg} onChange={(e) => handleTeaChange(e.target.value, pay.n - 1, 'pg')} className='cell-pg'>
@@ -318,7 +321,7 @@ export const ScheduleApp = ({ handleVisible, quotation }) => {
                                     <td>{pay.a.toFixed(2)}</td>
                                     <td>{pay.segDes.toFixed(2)}</td>
                                     <td>{pay.segRis.toFixed(2)}</td>
-                                    <td>{pay.segRis}</td>
+                                    <td>{pay.comision}</td>
                                     <td>{pay.portes}</td>
                                     <td>{pay.gastAdm.toFixed(2)}</td>
                                     <td>{pay.sf.toFixed(2)}</td>

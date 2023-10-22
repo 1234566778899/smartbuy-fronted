@@ -5,21 +5,24 @@ import { useForm } from 'react-hook-form'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import '../styles/main.css'
-import main from '../assets/main.png'
+import { showToastInfo } from '../utils'
+import { CONFI } from '../utils/config'
+
+
 export const LoginApp = () => {
     const navigate = useNavigate();
     const { register, handleSubmit, formState: { errors } } = useForm();
     const [alert, setAlert] = useState(null);
     const login = (data) => {
         data.username = data.email;
-        axios.post('http://localhost:4000/user/login', data)
+        axios.post(`${CONFI.uri}/user/login`, data)
             .then(response => {
                 localStorage.setItem('id', response.data.id);
                 navigate('/dashboard');
                 localStorage.setItem('nav', 'dashboard');
             })
             .catch(error => {
-                setAlert(error.response.data.error);
+                showToastInfo(error.response.data.error);
             })
     }
     return (

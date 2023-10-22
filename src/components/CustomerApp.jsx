@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form'
 import axios from 'axios';
 import { closeModal, openModal, setVisible, showToastInfo } from '../utils';
 import { EditCustomerApp } from './EditCustomerApp';
+import { CONFI } from '../utils/config';
 
 export const CustomerApp = () => {
     const { register, handleSubmit, formState: { errors }, reset } = useForm();
@@ -11,7 +12,7 @@ export const CustomerApp = () => {
     const [usersFiltered, setUsersFiltered] = useState([])
     const [userSelected, setUserSelected] = useState(null);
     const addCustomer = (data) => {
-        axios.post('http://localhost:4000/user/add', { ...data, monthly_income: parseFloat(data.monthly_income) })
+        axios.post(`${CONFI.uri}/user/add`, { ...data, monthly_income: parseFloat(data.monthly_income) })
             .then(r => {
                 closeModal('#add_customer');
                 showToastInfo('El usuario se registró correctamente');
@@ -20,7 +21,7 @@ export const CustomerApp = () => {
             .catch(error => alert(error.response.data.error));
     }
     const getCustomers = () => {
-        axios.get('http://localhost:4000/user/list')
+        axios.get(`${CONFI.uri}/user/list`)
             .then(res => {
                 setUsers(res.data);
                 setUsersFiltered(res.data);
@@ -29,7 +30,7 @@ export const CustomerApp = () => {
             .catch(error => console.log(error));
     }
     const deleteCustomer = (customerId) => {
-        axios.get(`http://localhost:4000/user/delete/${customerId}`)
+        axios.get(`${CONFI.uri}/user/delete/${customerId}`)
             .then(res => {
                 showToastInfo('Usuario eliminado correctamente');
                 getCustomers();
@@ -70,7 +71,9 @@ export const CustomerApp = () => {
                                         <th>DNI</th>
                                         <th>NOMBRE</th>
                                         <th>APELLIDO</th>
-                                        <th>INGRESO MENSUAL</th>
+                                        <th>DIRECCIÓN</th>
+                                        <th>TELEFONO</th>
+                                        <th>EMAIL</th>
                                         <th>Opciones</th>
                                     </tr>
                                 </thead>
@@ -79,10 +82,12 @@ export const CustomerApp = () => {
                                         usersFiltered.map((user, i) => (
                                             <tr key={user._id}>
                                                 <td>{i + 1}</td>
-                                                <td>{user.dni}</td>
+                                                <td>{user.documentNumber}</td>
                                                 <td>{user.name}</td>
                                                 <td>{user.lname}</td>
-                                                <td>S/. {user.monthly_income}</td>
+                                                <td>{user.address}</td>
+                                                <td>{user.telephone}</td>
+                                                <td>{user.email}</td>
                                                 <td className='text-center'>
                                                     <button className='btn btn-info' onClick={() => {
                                                         setUserSelected(user);
@@ -95,7 +100,7 @@ export const CustomerApp = () => {
                                     }
                                 </tbody>
                             </table>
-
+                            {usersFiltered.length == 0 && <p className='mt-2 text-center'>No existen clientes</p>}
                         </div>
                     </div>
                 </div>
@@ -108,9 +113,19 @@ export const CustomerApp = () => {
                     <h5 className='text-center'>Registrar cliente</h5>
                     <hr />
                     <form onSubmit={handleSubmit(addCustomer)}>
-                        <div className='form-group'>
-                            <label className='form-label'>DNI</label>
-                            <input {...register('dni', { required: true })} type="text" className='form-control' placeholder='4556756..' />
+                        <div className="input-group">
+                            <div className='form-group'>
+                                <label className='form-label'>Tipo de documento</label>
+                                <select className='form-control' {...register('documentType')}>
+                                    <option value="DNI">DNI</option>
+                                    <option value="CE">Carné de Extranjería:</option>
+                                    <option value="P">Pasaporte</option>
+                                </select>
+                            </div>
+                            <div className='form-group ml-2'>
+                                <label className='form-label'>Número de documento</label>
+                                <input {...register('documentNumber', { required: true })} type="text" className='form-control' placeholder='4556756..' />
+                            </div>
                         </div>
                         <div className='form-group'>
                             <label className='form-label'>Nombre</label>
@@ -121,8 +136,18 @@ export const CustomerApp = () => {
                             <input {...register('lname', { required: true })} type="text" className='form-control' placeholder='Escribe un apellido..' />
                         </div>
                         <div className='form-group'>
-                            <label className='form-label'>Ingreso mensual</label>
-                            <input {...register('monthly_income', { required: true, valueAsNumber: true })} type="number" step={0.00001} className='form-control' placeholder='S/ 00.00' />
+                            <label className='form-label'>Dirección</label>
+                            <input {...register('address', { required: true })} type="text" className='form-control' placeholder='Av. ..' />
+                        </div>
+                        <div className="input-group">
+                            <div className='form-group'>
+                                <label className='form-label'>Teléfono</label>
+                                <input {...register('telephone', { required: true, })} type="text" className='form-control' placeholder='93..' />
+                            </div>
+                            <div className='form-group ml-2'>
+                                <label className='form-label'>Email</label>
+                                <input {...register('email', { required: true, })} type="email" className='form-control' placeholder='...@gmail.com' />
+                            </div>
                         </div>
                         <button className='btn btn-success mt-2 w-100' type='submit'>Guardar</button>
                     </form>

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import logo from '../assets/logo-smartbuy.svg'
 import { closeModal, openAcordeon, openModal2, showToastInfo } from '../utils';
 import axios from 'axios';
+import { CONFI } from '../utils/config';
 export const NavApp = ({ logged = false }) => {
     const [user, setuser] = useState(null);
     const navigate = useNavigate();
@@ -15,7 +16,7 @@ export const NavApp = ({ logged = false }) => {
     };
     const getUser = () => {
         const userId = localStorage.getItem('id');
-        axios.get(`http://localhost:4000/user/find/${userId}`)
+        axios.get(`${CONFI.uri}/user/find/${userId}`)
             .then(response => {
                 if (response.data) setuser(response.data);
             })

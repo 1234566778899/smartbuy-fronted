@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { closeModal } from '../utils'
 import axios from 'axios';
+import { CONFI } from '../utils/config';
 
 export const FindCustomerApp = ({ selectUser }) => {
     const [users, setUsers] = useState([]);
     const getCustomers = () => {
-        axios.get('http://localhost:4000/user/list')
+        axios.get(`${CONFI.uri}/user/list`)
             .then(res => {
                 setUsers(res.data);
             })
@@ -27,7 +28,7 @@ export const FindCustomerApp = ({ selectUser }) => {
                     <table className='table text-center bg-white'>
                         <thead>
                             <tr>
-                                <th>DNI</th>
+                                <th>N° de documento</th>
                                 <th>Nombre</th>
                                 <th>Apellido</th>
                             </tr>
@@ -35,8 +36,8 @@ export const FindCustomerApp = ({ selectUser }) => {
                         <tbody>
                             {
                                 users.map(user => (
-                                    <tr key={user._id} onClick={() => { selectUser(user); closeModal('#find_customer')}}>
-                                        <td>{user.dni}</td>
+                                    <tr key={user._id} onClick={() => { selectUser(user); closeModal('#find_customer') }}>
+                                        <td>{user.documentNumber}</td>
                                         <td>{user.name}</td>
                                         <td>{user.lname}</td>
                                     </tr>

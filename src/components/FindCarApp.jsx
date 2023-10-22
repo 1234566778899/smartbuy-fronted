@@ -4,9 +4,8 @@ import { CARS } from '../utils/Cars'
 import { useState } from 'react'
 
 export const FindCarApp = ({ selectCar }) => {
-    const [carFiltered, setCarFiltered] = useState(CARS)
-    const [inpPrice, setInpPrice] = useState();
-    const [carSelected, setCarSelected] = useState();
+    const [carFiltered, setCarFiltered] = useState(CARS);
+    const [carSelected, setCarSelected] = useState({});
     const filterCar = (param) => {
         param = param.toLowerCase();
         setCarFiltered(CARS.filter(car => car.name.toLowerCase().includes(param) || car.description.toLowerCase().includes(param)));
@@ -28,8 +27,8 @@ export const FindCarApp = ({ selectCar }) => {
                         carFiltered.map(car => (
                             <div key={car.id} className={carSelected ? (`${car.price == carSelected.price ? 'car-selected car-box' : 'car-box'}`) : 'car-box'} onClick={() => { setCarSelected(car) }} >
                                 <img src={car.img} alt="img-auto" />
-                                <span><strong>{car.name}</strong></span><br />
-                                <span>{car.description}</span>
+                                <span><strong>{car.brand} {car.model}</strong></span><br />
+                                <span>{car.yearManufactured} {car.color}</span>
                                 <h6>{car.price.toLocaleString(undefined, { style: 'currency', currency: 'USD' })}</h6>
                             </div>
                         ))
@@ -41,8 +40,17 @@ export const FindCarApp = ({ selectCar }) => {
                     <button className='btn btn-danger' onClick={() => closeModal('#find_car')}>Cancelar</button>
                     <div className="d-flex align-items-center w-50">
                         <span className='icon-currency'>$</span>
-                        <input type="text" className='form-control bg-white inp-price mt-2' value={carSelected && carSelected.price} placeholder='Precio' onChange={(e) => setCarSelected(car => ({ ...car, price: e.target.value }))} />
-                        <button className='btn btn-primary ml-2 mt-1' onClick={() => { selectCar(carSelected); closeModal('#find_car') }}>Aceptar</button>
+                        <input
+                            type="text"
+                            className='form-control bg-white inp-price mt-2'
+                            value={carSelected.price || ''}
+                            placeholder='Precio'
+                            onChange={(e) => setCarSelected(car => ({ ...car, price: e.target.value }))}
+                        />
+                        <button className='btn btn-primary ml-2 mt-1' onClick={() => {
+                            selectCar(carSelected);
+                            closeModal('#find_car')
+                        }}>Aceptar</button>
                     </div>
                 </div>
 

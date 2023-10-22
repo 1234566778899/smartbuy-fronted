@@ -2,10 +2,11 @@ import React, { useEffect, useState } from 'react'
 import { NavApp } from './NavApp'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios';
-import { parseDate, parseFormatDate, showToastInfo } from '../utils';
+import { showToastInfo } from '../utils';
 import { generatePdfSchedule } from '../utils/pdf/Schedule';
 import { useForm } from 'react-hook-form';
 import moment from 'moment/moment';
+import { CONFI } from '../utils/config';
 
 export const QuotationApp = () => {
     const navigate = useNavigate();
@@ -13,15 +14,17 @@ export const QuotationApp = () => {
     const [quotations, setquotations] = useState([]);
 
     const getQuotations = (data) => {
-        axios.post('http://localhost:4000/quotation/list', data)
-            .then(response => setquotations(response.data))
+        axios.post(`${CONFI.uri}/quotation/list`, data)
+            .then(response => {
+                setquotations(response.data);
+            })
             .catch(error => {
                 showToastInfo('Error');
             })
     }
 
     const deleteQuotations = (id) => {
-        axios.get(`http://localhost:4000/quotation/delete/${id}`)
+        axios.get(`${CONFI.uri}/quotation/delete/${id}`)
             .then(response => {
                 showToastInfo(response.data.ok);
                 getQuotations();
@@ -33,19 +36,17 @@ export const QuotationApp = () => {
             })
     }
     const lookPdf = (data) => {
-        let { frecuencyPay, daysYear, numDues, fee, insure, loanAmount, risk, portes, cok, gastAdm, comision } = data;
-        const pays = data.flows.map(x => ({ ...x, frecuencyPay, daysYear, numDues, fee, insure, loanAmount, risk, portes, cok, gastAdm, comision }));
-        generatePdfSchedule(pays, loanAmount);
+        generatePdfSchedule(data.flows, data);
     }
     const searchQuotation = (data) => {
-        const { inicio, fin, dni, name, lname } = data;
+        const { inicio, fin, documentNumber, name, lname } = data;
 
         if (inicio && fin) {
             const i = new Date(inicio);
             const f = new Date(fin);
             if (i > f) return showToastInfo('La fecha de inicio no debe ser mayor a la fecha de fin');
         }
-        getQuotations({ inicio, fin, dni, name, lname });
+        getQuotations({ inicio, fin, documentNumber, name, lname });
     }
     useEffect(() => {
         getQuotations({});
@@ -96,8 +97,8 @@ export const QuotationApp = () => {
                                         <td>{quo.customer.dni}</td>
                                         <td>{quo.customer.name}</td>
                                         <td>{quo.customer.lname}</td>
-                                        <td>VAN</td>
-                                        <td>TIR</td>
+                                        <td>{quo.van.toFixed(2)}</td>
+                                        <td>{quo.tir.toFixed(2)}</td>
                                         <td>{quo.loanAmount}</td>
                                         <td>{quo.fee.toFixed(2)} %</td>
                                         <td>{quo.numDues}</td>
@@ -108,6 +109,7 @@ export const QuotationApp = () => {
                             }
                         </tbody>
                     </table>
+                    {quotations.length == 0 && <p className='mt-2 text-center'>No existen operaciones</p>}
                 </div>
                 <br />
             </div>

@@ -1,7 +1,6 @@
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-
-export const generatePdfSchedule = (payments, loanAmount) => {
+export const generatePdfSchedule = (payments, quotation) => {
     const mainConfig = {
         unit: "pt",
         orientation: "p",
@@ -10,14 +9,218 @@ export const generatePdfSchedule = (payments, loanAmount) => {
     const doc = new jsPDF(mainConfig);
     const pageSize = doc.internal.pageSize;
     const pageWidth = pageSize.width;
+    const positionY = 100;
+    const colors = {
+        black: [0, 0, 0],
+        white: [255, 255, 255],
+        blue: [0, 72, 151],
+        light_blue: [217, 225, 242],
+        darkgray: [169, 169, 169]
+    }
     doc.setFont("helvetica", "bold");
     doc.setFontSize(10);
-    doc.text("PLAN DE PAGOS POR EL MÉTODO FRANCES VENCIDO ORDINARIO (30 DÍAS)", pageWidth / 2, 40, { align: 'center' });
+    doc.addImage('https://i.postimg.cc/KYNJ3tsn/logo.png', 'PNG', pageWidth / 2 - 20, 10, 40, 40, 'alias', 'FAST', 0);
+    doc.text("PLAN DE PAGOS POR EL MÉTODO FRANCES VENCIDO ORDINARIO", pageWidth / 2, 65, { align: 'center' });
+    doc.text("Fecha: 21/10/2023", pageWidth - 70, 95, { align: 'center' });
+    const symbol = quotation.currency == 'USD' ? '$' : 'S/.';
+    const getDescripPeriGr = () => {
+        let flows = payments;
+        let p = [], t = [];
+        let otro_p = false, otro_t = false;
 
+        for (let i = 0; i < flows.length; i++) {
+            if (flows[i].pg === 'P' && !otro_p) {
+                p.push({
+                    inicio: i + 1,
+                    fin: null
+                });
+                otro_p = true;
+            } else if (flows[i].pg === 'P' && otro_p) {
+                p[p.length - 1].fin = i + 1;
+            } else {
+                otro_p = false;
+            }
+
+            if (flows[i].pg === 'T' && !otro_t) {
+                t.push({
+                    inicio: i + 1,
+                    fin: null
+                });
+                otro_t = true;
+            } else if (flows[i].pg === 'T' && otro_t) {
+                t[t.length - 1].fin = i + 1;
+            } else {
+                otro_t = false;
+            }
+        }
+        const formatPeriod = (period) => `[${period.inicio}${period.fin ? `-${period.fin}` : ''}]`;
+        const cadParcial = p.length ? `Parcial(${p.map(formatPeriod).join(',')})` : '';
+        const cadTotal = t.length ? `Total(${t.map(formatPeriod).join(',')})` : '';
+        if (!cadParcial && !cadTotal) return 'No aplica';
+        return `${cadParcial} ${cadTotal}`.trim();
+    }
+
+    const info = {
+        head: [
+            [
+                {
+                    content: 'Datos del cliente',
+                    colSpan: 2,
+                    styles: {
+                        halign: 'start'
+                    }
+                }
+            ]
+        ],
+        body: [
+            [
+                'Nombre completo:',
+                `${quotation.customer.name} ${quotation.customer.lname}`
+            ],
+            [
+                'Tipo y número de documento:',
+                `${quotation.customer.documentType == 'DNI' ? 'DNI' : (quotation.customer.documentType == 'P' ? 'Pasaporte' : 'Carné de extranjería')} - ${quotation.customer.documentNumber}`
+            ],
+            [
+                'Dirección:',
+                `${quotation.customer.address}`
+            ],
+            [
+                'Teléfono y email:',
+                `${quotation.customer.telephone} - ${quotation.customer.email}`
+            ],
+            [
+                {
+                    content: 'Información del Vehículo',
+                    colSpan: 2,
+                    styles: {
+                        fillColor: colors.darkgray,
+                        fontStyle: 'bold'
+                    }
+                }
+            ],
+            [
+                'Marca y Modelo:',
+                `${quotation.car.brand} ${quotation.car.model}`
+            ],
+            [
+                'Precio del vehículo:',
+                `$ ${quotation.car.price}`
+            ],
+            [
+                'Año/Fabricación:',
+                `${quotation.car.yearManufactured}`
+            ],
+            [
+                'Color y otros detalles relevantes:',
+                `${quotation.car.color}, ${quotation.car.otherDetails}`
+            ],
+            [
+                {
+                    content: 'Condiciones Financieras',
+                    colSpan: 2,
+                    styles: {
+                        fillColor: colors.darkgray,
+                        fontStyle: 'bold'
+                    }
+                }
+            ],
+            [
+                'Moneda de la cotización:',
+                `${quotation.currency == 'USD' ? 'Dolares' : 'Soles'}`
+            ],
+            [
+                'Monto total financiado:',
+                `${symbol} ${quotation.loanAmount}`
+            ],
+            [
+                'Monto de la inicial:',
+                `${symbol} ${quotation.initialDue}`
+            ],
+            [
+                'Tasa de interés:',
+                `${quotation.fee.toFixed(2)}% anual (efectiva)`
+            ],
+            [
+                'Número de cuotas:',
+                `${quotation.numDues}`
+            ],
+            [
+                'Periodo de gracia:',
+                `${getDescripPeriGr()}`
+            ],
+            [
+                'Costos/Gastos iniciales',
+                `${symbol} ${quotation.initialCost}`
+            ],
+            [
+                {
+                    content: 'Indicadores Financieros',
+                    colSpan: 2,
+                    styles: {
+                        fillColor: colors.darkgray,
+                        fontStyle: 'bold'
+                    }
+                }
+            ],
+            [
+                'Tasa de descuento (COK):',
+                `${((Math.pow(1 + (quotation.cok / 100), quotation.frecuencyPay / quotation.daysYear) - 1) * 100).toFixed(4)} %`
+            ],
+            [
+                'Valor Actual Neto (VAN):',
+                `${quotation.van.toFixed(2)}`
+            ],
+            [
+                'Tasa Interna de Retorno (TIR):',
+                `${quotation.tir} %`
+            ],
+            [
+                {
+                    content: 'Totales',
+                    colSpan: 2,
+                    styles: {
+                        fillColor: colors.darkgray,
+                        fontStyle: 'bold'
+                    }
+                }
+            ],
+            [
+                'Intereses',
+                `${symbol} ${quotation.totalInterest.toFixed(2)}`
+            ],
+            [
+                'Amortización del capital',
+                `${symbol} ${quotation.totalAmort.toFixed(2)}`
+            ],
+            [
+                'Seguro de desgravamen',
+                `${symbol} ${quotation.totalSegDes.toFixed(2)}`
+            ],
+            [
+                'Seguro contra todo riesgo',
+                `${symbol} ${quotation.totalRisk.toFixed(2)}`
+            ],
+            [
+                'Comisiones periodicas',
+                `${symbol} ${quotation.totalComi.toFixed(2)}`
+            ],
+            [
+                'Portes / Gastos de adm',
+                `${symbol} ${quotation.totalPortes.toFixed(2)}`
+            ],
+        ]
+    }
     const layout = {
         head: [
             [
-                'N°', 'PG', 'SALDO INICIAL', 'INTERÉS', 'CUOTA', 'AMORT.', 'SEG. DESGRAV', 'SEG. DE RIESGO', 'COMISIÓN', 'PORTES', 'GASTOS ADM.', 'SALDO FINAL.', 'FLUJO'
+                {
+                    content: 'Cronograma de pagos',
+                    colSpan: 12
+                }
+            ],
+            [
+                'N°', 'PG', 'Saldo inicial', 'Interés', 'Cuota', 'Amort.', 'Seg. desgrav.', 'Seg. de riesgo', 'Comisión', 'Portes', 'Gastos de adm.', 'Saldo final.', 'Flujo'
             ],
         ],
         body: [
@@ -27,7 +230,7 @@ export const generatePdfSchedule = (payments, loanAmount) => {
                     content: '',
                     colSpan: 11
                 },
-                loanAmount
+                quotation.loanAmount
             ],
             ...payments.map(pay => (
                 [
@@ -37,17 +240,11 @@ export const generatePdfSchedule = (payments, loanAmount) => {
         ],
     };
 
-    const colors = {
-        black: [0, 0, 0],
-        white: [255, 255, 255],
-        blue: [0, 72, 151],
-        light_blue: [217, 225, 242],
-        darkgray: [169, 169, 169]
-    }
+
 
     const margin = 20;
 
-    let positionY = 60
+
     const optionsForm = {
         tableLineColor: colors.black,
         tableLineWidth: 0.1,
@@ -72,6 +269,14 @@ export const generatePdfSchedule = (payments, loanAmount) => {
     }
     autoTable(doc, {
         startY: positionY,
+        ...info,
+        theme: "grid",
+        margin,
+        layout,
+        ...optionsForm,
+    })
+    autoTable(doc, {
+        startY: doc.autoTable.previous.finalY + 170,
         ...layout,
         theme: "grid",
         margin,

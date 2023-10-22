@@ -3,20 +3,21 @@ import { NavApp } from './NavApp'
 import { ChartArea } from './ChartArea'
 import axios from 'axios';
 import { showToastInfo } from '../utils';
+import { CONFI } from '../utils/config';
 
 export const DashboardApp = () => {
     const [users, setUsers] = useState([]);
     const [quotations, setquotations] = useState([]);
 
     const getQuotations = () => {
-        axios.post('http://localhost:4000/quotation/list', {})
+        axios.post(`${CONFI.uri}/quotation/list`, {})
             .then(response => setquotations(response.data))
             .catch(error => {
                 showToastInfo('Error');
             })
     }
     const getCustomers = () => {
-        axios.get('http://localhost:4000/user/list')
+        axios.get(`${CONFI.uri}/user/list`)
             .then(res => {
                 setUsers(res.data);
             })
