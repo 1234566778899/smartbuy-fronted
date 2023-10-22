@@ -22,7 +22,8 @@ export const LoginApp = () => {
                 localStorage.setItem('nav', 'dashboard');
             })
             .catch(error => {
-                showToastInfo(error.response.data.error);
+                console.log(error);
+                showToastInfo(error.response ? error.response.data.error : 'Error');
             })
     }
     return (

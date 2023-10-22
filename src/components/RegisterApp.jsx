@@ -18,6 +18,7 @@ export const RegisterApp = () => {
                 localStorage.setItem('nav', 'dashboard');
             })
             .catch(error => {
+                console.log(error);
                 setAlert(error.response.data.error || 'Error');
             })
     }

@@ -18,7 +18,7 @@ export const CustomerApp = () => {
                 showToastInfo('El usuario se registró correctamente');
                 getCustomers();
             })
-            .catch(error => alert(error.response.data.error));
+            .catch(error => showToastInfo(error.response.data.error));
     }
     const getCustomers = () => {
         axios.get(`${CONFI.uri}/user/list`)

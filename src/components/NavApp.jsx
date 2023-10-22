@@ -21,6 +21,7 @@ export const NavApp = ({ logged = false }) => {
                 if (response.data) setuser(response.data);
             })
             .catch(error => {
+                console.log(error);
                 if (logged) {
                     showToastInfo('No tienes acceso');
                     navigate('/login');
@@ -40,7 +41,7 @@ export const NavApp = ({ logged = false }) => {
         <>
             <nav className="navbar navbar-expand-lg bg-dark navbar-dark py-2" data-bs-theme="dark">
                 <div className="container">
-                    <a className="navbar-brand" href="#" onClick={() => { navigate('/login') }}><img src={logo} alt="logo" width={30} style={{ color: 'white' }} /> SMARTBUY 2</a>
+                    <a className="navbar-brand" href="#" onClick={() => { navigate('/login') }}><img src={logo} alt="logo" width={30} style={{ color: 'white' }} /> SMARTBUY</a>
                     <button className="navbar-toggler" onClick={() => openAcordeon('#nav_collapse')} type="button" >
                         <span className="navbar-toggler-icon"></span>
                     </button>

@@ -13,6 +13,7 @@ export const DashboardApp = () => {
         axios.post(`${CONFI.uri}/quotation/list`, {})
             .then(response => setquotations(response.data))
             .catch(error => {
+                console.log(error);
                 showToastInfo('Error');
             })
     }
