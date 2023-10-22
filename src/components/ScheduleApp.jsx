@@ -200,7 +200,7 @@ export const ScheduleApp = ({ handleVisible, quotation }) => {
                     <i className="fa-solid fa-backward icon" onClick={() => handleVisible()}></i>
                     <h4 className='ml-3'>Cronograma de Pagos</h4>
                 </div>
-                <button className='btn btn-info' onClick={() => submitGenerateQuotation()}>GENERAR PLAN DE PAGOS</button>
+                <button className='btn btn-primari' onClick={() => submitGenerateQuotation()}>GENERAR PLAN DE PAGOS</button>
             </div>
             <hr />
             <div className="row">

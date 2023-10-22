@@ -50,7 +50,7 @@ export const LoginApp = () => {
                                     <input {...register('password', { required: true })} type="password" />
                                     {errors.password && <span className='alerta'>Debe ingresar contraseña</span>}
                                 </div>
-                                <button className='btn btn-primary mt-3 w-100'>Login</button>
+                                <button className='btn btn-primari mt-3 w-100'>Login</button>
                                 {alert && <p className='alert alert-danger mt-3'>{alert}</p>}
                                 <p className='text-center mt-3'>¿No tienes una cuenta? <a href="#" className='text-white' onClick={() => navigate('/register')}><strong>Registrate</strong></a></p>
                             </form>

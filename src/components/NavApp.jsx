@@ -39,7 +39,7 @@ export const NavApp = ({ logged = false }) => {
 
     return (
         <>
-            <nav className="navbar navbar-expand-lg bg-dark navbar-dark py-2" data-bs-theme="dark">
+            <nav className="navbar navbar-expand-lg bg-darki navbar-dark py-2" data-bs-theme="dark">
                 <div className="container">
                     <a className="navbar-brand" href="#" onClick={() => { navigate('/login') }}><img src={logo} alt="logo" width={30} style={{ color: 'white' }} /> SMARTBUY</a>
                     <button className="navbar-toggler" onClick={() => openAcordeon('#nav_collapse')} type="button" >

@@ -102,7 +102,7 @@ export const QuotationApp = () => {
                                         <td>{quo.loanAmount}</td>
                                         <td>{quo.fee.toFixed(2)} %</td>
                                         <td>{quo.numDues}</td>
-                                        <td><button className='px-3' onClick={() => lookPdf(quo)}>PDF<i className="ml-2 fa-sharp fa-solid fa-eye"></i></button></td>
+                                        <td><button className='btn' onClick={() => lookPdf(quo)}>Descargar</button></td>
                                         <td><button className='bg-danger px-4' onClick={() => deleteQuotations(quo._id)}><i className="fa-solid fa-trash"></i></button></td>
                                     </tr>
                                 ))

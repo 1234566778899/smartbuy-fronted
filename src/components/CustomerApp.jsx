@@ -57,7 +57,7 @@ export const CustomerApp = () => {
 
                     <div className="col-md-12">
                         <div className="text-right">
-                            <button className='btn btn-success' onClick={() => openModal('#add_customer')}>Agregar cliente</button>
+                            <button className='btn btn-successi' onClick={() => openModal('#add_customer')}>Agregar cliente</button>
                         </div>
                         <div className="form-group">
                             <label >Buscar cliente</label>
@@ -89,7 +89,7 @@ export const CustomerApp = () => {
                                                 <td>{user.telephone}</td>
                                                 <td>{user.email}</td>
                                                 <td className='text-center'>
-                                                    <button className='btn btn-info' onClick={() => {
+                                                    <button className='btn btn-primari' onClick={() => {
                                                         setUserSelected(user);
                                                     }}>
                                                         <i className="fa-solid fa-user-pen"></i></button>

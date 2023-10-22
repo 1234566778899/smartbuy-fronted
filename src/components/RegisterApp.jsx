@@ -50,7 +50,7 @@ export const RegisterApp = () => {
                                     <input {...register('password', { required: true })} type="password" />
                                     {errors.password && <span className='text-danger alerta'>La contraseña es obligatorio</span>}
                                 </div>
-                                <button className='btn btn-primary mt-3 w-100'>SIGN UP</button>
+                                <button className='btn btn-primari mt-3 w-100'>SIGN UP</button>
                                 {alert && <p className='alert alert-danger mt-2'>{alert}</p>}
                                 <p className='text-center mt-3'>¿Ya tienes una cuenta? <a href="#" className='text-white' onClick={() => navigate('/login')}><strong>Iniciar sesión</strong></a></p>
                             </form>

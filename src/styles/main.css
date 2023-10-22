@@ -47,7 +47,9 @@
 .table-quotation {
     overflow-x: scroll;
 }
-
+.table-quotation th{
+    background-color: #EAEAEA;
+}
 #find_customer {
     display: none;
     position: fixed;
@@ -283,6 +285,7 @@
 
 
 .table-schedule table tr th {
+    background-color: #EAEAEA;
     padding: 10px 10px;
     border-bottom: 1px solid #EBEBEB;
 }
@@ -410,6 +413,10 @@
     padding: 10px 5px;
 }
 
+.table-customer th {
+    background-color: #EAEAEA;
+}
+
 .table-customer td {
     padding: 5px 0px;
 }
@@ -437,15 +444,15 @@ th {
 .table-crud-quotation button {
     border: none;
     background: none;
-    background-color: #1F9BCF;
+    background-color: #007BFF;
     padding: 8px 7px;
     color: white;
     outline: none;
 }
 
 .table-crud-quotation button:hover {
-    background-color: #1A82AE;
-
+    background-color: #016adb;
+    color: white;
 }
 
 .car-selected {
@@ -548,6 +555,35 @@ th {
 .box-chart {
     overflow-x: auto;
 }
-.form-search-quotation{
+
+.form-search-quotation {
     overflow-x: auto;
+}
+
+.btn-primari {
+    background-color: #007BFF;
+    color: white;
+}
+.bg-primari {
+    background-color: #007BFF;
+    color: white;
+}
+
+.btn-primari:hover {
+    color: white;
+    background-color: #026de0;
+}
+
+.bg-darki {
+    background-color: #333333;
+}
+
+.btn-successi {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.btn-successi:hover {
+    background-color: #4aa74d;
+    color: white;
 }
