@@ -468,51 +468,50 @@ th {
 
 .login-box {
     height: 100vh;
-    background-image: url('../assets/main.png');
 }
 
 .box-registro {
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(255, 255, 255, 0.5);
     padding: 10px;
-    color: white;
+    color: black;
     border-radius: 5px;
-    box-shadow: 0px 3px 3px rgba(255, 255, 255, 0.2);
+    box-shadow: 0px 3px 3px rgba(0, 0, 0, 0.2);
 }
 
 .box-registro h3 {
-    color: white;
+    color: rgb(0, 0, 0);
 }
 
 .box-registro input {
     outline: none;
     width: 100%;
     background: none;
-    border: 1px solid white;
+    border: 1px solid rgb(177, 177, 177);
     padding: 7px;
-    color: white;
-    border-radius: 2px;
+    color: black;
+    border-radius: 3px;
 }
 
 .box-login {
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(255, 255, 255, 0.5);
     padding: 10px;
-    color: white;
+    color: black;
     border-radius: 5px;
-    box-shadow: 0px 3px 3px rgba(255, 255, 255, 0.2);
+    box-shadow: 0px 3px 3px rgba(3, 3, 3, 0.2);
 }
 
 .box-login h3 {
-    color: white;
+    color: black;
 }
 
 .box-login input {
     outline: none;
     width: 100%;
     background: none;
-    border: 1px solid white;
+    border: 1px solid rgb(166, 166, 166);
     padding: 7px;
-    color: white;
-    border-radius: 2px;
+    color: black;
+    border-radius: 3px;
 }
 
 .tarjeta {

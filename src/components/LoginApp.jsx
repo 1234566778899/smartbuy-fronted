@@ -52,7 +52,7 @@ export const LoginApp = () => {
                                 </div>
                                 <button className='btn btn-primari mt-3 w-100'>Login</button>
                                 {alert && <p className='alert alert-danger mt-3'>{alert}</p>}
-                                <p className='text-center mt-3'>¿No tienes una cuenta? <a href="#" className='text-white' onClick={() => navigate('/register')}><strong>Registrate</strong></a></p>
+                                <p className='text-center mt-3'>¿No tienes una cuenta? <a href="#" onClick={() => navigate('/register')}><strong>Registrate</strong></a></p>
                             </form>
                         </div>
                     </div>
