@@ -130,6 +130,7 @@ export const ScheduleApp = ({ handleVisible, quotation }) => {
                 sf = si - a;
                 flujo = cuota + pay.portes + pay.comision + pay.gastAdm + pay.segRis + segDes;
             }
+            
             sum += (flujo / Math.pow(1 + cok, index + 1));
             totalCuota += cuota;
             totalAmort += a;
