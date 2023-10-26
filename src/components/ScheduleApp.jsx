@@ -20,6 +20,7 @@ export const ScheduleApp = ({ handleVisible, quotation }) => {
     const [tasaDes, settasaDes] = useState(0);
     const [TCEA, setTCEA] = useState();
     const [van, setvan] = useState();
+    
     const generateSchedule = () => {
         let { frecuencyPay, daysYear, numDues, fee, insure, loanAmount, risk, portes, cok, gastAdm, comision } = quotation;
         let si = loanAmount;
@@ -198,7 +199,7 @@ export const ScheduleApp = ({ handleVisible, quotation }) => {
             <div className="d-flex justify-content-between align-items-center">
                 <div className='d-flex justify-content-between align-items-center'>
                     <i className="fa-solid fa-backward icon" onClick={() => handleVisible()}></i>
-                    <h4 className='ml-3'>Cronograma de Pagos</h4>
+                    <h4 className='ml-3'>PREVISUALIZACIÓN</h4>
                 </div>
                 <button className='btn btn-primari' onClick={() => submitGenerateQuotation()}>GENERAR PLAN DE PAGOS</button>
             </div>

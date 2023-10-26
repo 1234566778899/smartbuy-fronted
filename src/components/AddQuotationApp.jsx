@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { NavApp } from './NavApp'
 import { FindCustomerApp } from './FindCustomerApp'
-import { openModal, setVisible, showToastInfo } from '../utils'
+import { closeModal, openModal, setVisible, showToastInfo } from '../utils'
 import { FindCarApp } from './FindCarApp'
 import { useForm } from 'react-hook-form'
 import { ScheduleApp } from './ScheduleApp'
 
 export const AddQuotationApp = () => {
+
     const { register, handleSubmit, formState: { errors }, watch } = useForm({
         defaultValues: {
             notarial_cost: '150',
@@ -32,8 +33,11 @@ export const AddQuotationApp = () => {
     const [insureDeduct, setInsureDeduct] = useState(0)
     const [riskInsure, setRiskInsure] = useState(0)
     const [quotation, setquotation] = useState(null);
-    const [initialCost, setinitialCost] = useState(0)
+    const [initialCost, setinitialCost] = useState(0);
+    const [initialDue, setinitialDue] = useState(0);
+    const [finalDue, setfinalDue] = useState(0);
     const allForm = watch();
+
     const submitSchedule = (data) => {
         if (!user) return showToastInfo('Debe seleccionar un cliente');
         if (!car) return showToastInfo('Debe seleccionar un auto');
@@ -55,11 +59,9 @@ export const AddQuotationApp = () => {
             comision: parseFloat(data.periodic_commission) || 0,
             currency: data.currency,
             daysYear,
-            initialDue: parseFloat(data.initial_due) * car.price / 100,
+            initialDue: initialDue,
+            finalDue: finalDue,
             initialCost
-
-            //cok_type   (1+TEP/30)^12-1
-            //rate_type
         }
         setquotation({ ...quatotationData, car, customer: user });
         setVisible('#box_add_datatation', false);
@@ -67,8 +69,12 @@ export const AddQuotationApp = () => {
     }
     useEffect(() => {
         const priceCar = (car && car.price) || 0;
-        const initialDue = parseFloat(allForm.initial_due) || 0;
-        setBalanceFinance(priceCar - (priceCar * initialDue / 100));
+        const _initialDue = parseFloat(allForm.initial_due) || 0;
+        const _finalDue = parseFloat(allForm.final_due) || 0;
+        setinitialDue(priceCar * _initialDue / 100);
+        setfinalDue(priceCar * _finalDue / 100);
+        const _balanceFinance = priceCar * (100 - _initialDue) / 100;
+        setBalanceFinance(_balanceFinance);
         const notarialCost = parseFloat(allForm.notarial_cost) || 0;
         const registrationCost = parseFloat(allForm.registration_cost) || 0;
         const appraisal = parseFloat(allForm.appraisal) || 0;
@@ -76,7 +82,7 @@ export const AddQuotationApp = () => {
         const activationFee = parseFloat(allForm.activation_fee) || 0;
         const total = notarialCost + registrationCost + appraisal + studyFee + activationFee;
         setinitialCost(total);
-        setLoanAmount(total + balanceFinance);
+        setLoanAmount(total + _balanceFinance);
         const numAnios = parseInt(allForm.num_years) || 0;
         const frecuencyPay = parseInt(allForm.frecuency_pay) || 0;
         const daysYear = parseInt(allForm.days_year) || 0;
@@ -91,8 +97,6 @@ export const AddQuotationApp = () => {
             setRiskInsure((riskEnsurence / 100) * priceCar / numberDuesYear);
         }
     }, [car, allForm])
-
-
 
     return (
         <>
@@ -149,17 +153,27 @@ export const AddQuotationApp = () => {
                             <hr />
                             <span className='form-label mt-2'>Precio de venta del Vehículo</span>
                             <input
+                                id='inp_car'
                                 value={car ? car.price.toLocaleString(undefined, { style: 'currency', currency: 'USD' }) : ''}
                                 className="form-control"
                                 readOnly
                                 onFocus={() => openModal('#find_car')}
                             />
-                            <div className="form-group mt-2">
-                                <span className='form-label'>Cuota Inicial</span>
-                                <select className='form-control bg-white' {...register('initial_due', { required: true })}>
-                                    <option value="20">20%</option>
-                                    <option value="30">30%</option>
-                                </select>
+                            <div className="d-flex">
+                                <div className="form-group mt-2 w-100">
+                                    <span className='form-label'>Cuota Inicial</span>
+                                    <select className='form-control bg-white' {...register('initial_due', { required: true })}>
+                                        <option value="20">20%</option>
+                                        <option value="30">30%</option>
+                                    </select>
+                                </div>
+                                <div className="form-group mt-2 w-100 ml-2">
+                                    <span className='form-label'>Cuota final</span>
+                                    <select className='form-control bg-white' {...register('final_due', { required: true })}>
+                                        <option value="40">40%</option>
+                                        <option value="50">50%</option>
+                                    </select>
+                                </div>
                             </div>
                             <div className="form-group mt-2">
                                 <span className='form-label'>Tasa de interés (Anual)</span>
@@ -177,22 +191,23 @@ export const AddQuotationApp = () => {
                             </div>
                             <div className="form-group mt-2">
                                 <span className='form-label'>Número de años</span>
-                                <input type="number" className="form-control bg-white" {...register('num_years', {
-                                    required: true, validate: {
-                                        positive: value => parseFloat(value) > 0 || 'Debe ser un número positivo',
-                                    }
-                                })} />
-                            </div>
-                            <div className="form-group mt-2">
-                                <span className='form-label'>Frecuencia de pago</span>
-                                <input type="number" className="form-control bg-white" {...register('frecuency_pay')} readOnly />
-                            </div>
-                            <div className="form-group mt-2">
-                                <span className='form-label'>N° de dias al año</span>
-                                <select className='form-control bg-white' {...register('days_year', { required: true })}>
-                                    <option value="360">360</option>
-                                    <option value="365">365</option>
+                                <select className='form-control bg-white' {...register('num_years', { required: true })}>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
                                 </select>
+                            </div>
+                            <div className="d-flex">
+                                <div className="form-group mt-2 w-100">
+                                    <span className='form-label'>Frecuencia de pago (Dias)</span>
+                                    <input type="number" className="form-control bg-white" {...register('frecuency_pay')} readOnly />
+                                </div>
+                                <div className="form-group mt-2 ml-2 w-100">
+                                    <span className='form-label'>N° de dias al año</span>
+                                    <select className='form-control bg-white w-100' {...register('days_year', { required: true })}>
+                                        <option value="360">360</option>
+                                        <option value="365">365</option>
+                                    </select>
+                                </div>
                             </div>
 
 
@@ -255,21 +270,23 @@ export const AddQuotationApp = () => {
                                     }
                                 })} />
                             </div>
-                            <div className="form-group">
-                                <span className='form-label'>Portes</span>
-                                <input type="number" step={0.00001} className='form-control bg-white' placeholder='0.0502%' {...register('shipping', {
-                                    validate: {
-                                        positive: value => parseFloat(value) >= 0 || 'Debe ser un número positivo',
-                                    }
-                                })} />
-                            </div>
-                            <div className="form-group">
-                                <span className='form-label'>Gastos de administración</span>
-                                <input type="number" step={0.00001} className='form-control bg-white' placeholder='0..' {...register('administration_expenses', {
-                                    validate: {
-                                        positive: value => parseFloat(value) >= 0 || 'Debe ser un número positivo',
-                                    }
-                                })} />
+                            <div className="d-flex">
+                                <div className="form-group w-100">
+                                    <span className='form-label'>Portes</span>
+                                    <input type="number" step={0.00001} className='form-control bg-white' placeholder='0.0502%' {...register('shipping', {
+                                        validate: {
+                                            positive: value => parseFloat(value) >= 0 || 'Debe ser un número positivo',
+                                        }
+                                    })} />
+                                </div>
+                                <div className="form-group w-100 ml-2">
+                                    <span className='form-label'>Gastos de administración</span>
+                                    <input type="number" step={0.00001} className='form-control bg-white' placeholder='0..' {...register('administration_expenses', {
+                                        validate: {
+                                            positive: value => parseFloat(value) >= 0 || 'Debe ser un número positivo',
+                                        }
+                                    })} />
+                                </div>
                             </div>
                         </div>
                         <div className="col-md-6">
@@ -295,6 +312,16 @@ export const AddQuotationApp = () => {
                             <hr />
                         </div>
                         <div className="col-md-6">
+                            <div className="d-flex">
+                                <div className='form-group w-100 mr-1'>
+                                    <span className='form-label'>Cuota inicial</span>
+                                    <input type="text" className='form-control bg-white' readOnly value={initialDue} />
+                                </div>
+                                <div className='form-group w-100 ml-1'>
+                                    <span className='form-label'>Cuota final</span>
+                                    <input type="text" className='form-control bg-white' readOnly value={finalDue} />
+                                </div>
+                            </div>
                             <div className='form-group'>
                                 <span className='form-label'>Saldo a financiar</span>
                                 <input type="text" className='form-control bg-white' readOnly value={balanceFinance} />
@@ -303,17 +330,18 @@ export const AddQuotationApp = () => {
                                 <span className='form-label'>Monto del prestamo</span>
                                 <input type="text" className='form-control bg-white' readOnly value={loanAmount} />
                             </div>
-                            <div className='form-group'>
-                                <span className='form-label'>N° de cuotas al año</span>
-                                <input type="text" className='form-control bg-white' readOnly value={numberDuesYear} />
-                            </div>
-
 
                         </div>
                         <div className="col-md-6">
-                            <div className='form-group'>
-                                <span className='form-label'>N° total de cuotas</span>
-                                <input type="text" className='form-control bg-white' readOnly value={totalDues ? totalDues : ''} />
+                            <div className="d-flex">
+                                <div className='form-group w-100 mr-1'>
+                                    <span className='form-label'>N° de cuotas al año</span>
+                                    <input type="text" className='form-control bg-white' readOnly value={numberDuesYear} />
+                                </div>
+                                <div className='form-group w-100 ml-1'>
+                                    <span className='form-label'>N° total de cuotas</span>
+                                    <input type="text" className='form-control bg-white' readOnly value={totalDues ? totalDues : ''} />
+                                </div>
                             </div>
                             <div className='form-group'>
                                 <span className='form-label'>% de Seguro desgrav. per.</span>

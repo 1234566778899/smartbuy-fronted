@@ -130,13 +130,22 @@ export const generatePdfSchedule = (payments, quotation) => {
                 `${quotation.currency == 'USD' ? 'Dolares' : 'Soles'}`
             ],
             [
+                'Cuota inicial:',
+                `${symbol} ${quotation.initialDue}`
+            ],
+            [
+                'Cuota final:',
+                `${symbol} ${quotation.finalDue}`
+            ],
+            [
+                'Costos/Gastos iniciales',
+                `${symbol} ${quotation.initialCost}`
+            ],
+            [
                 'Monto total financiado:',
                 `${symbol} ${quotation.loanAmount}`
             ],
-            [
-                'Monto de la inicial:',
-                `${symbol} ${quotation.initialDue}`
-            ],
+
             [
                 'Tasa de interés:',
                 `${quotation.fee.toFixed(2)}% anual (efectiva)`
@@ -148,10 +157,6 @@ export const generatePdfSchedule = (payments, quotation) => {
             [
                 'Periodo de gracia:',
                 `${getDescripPeriGr()}`
-            ],
-            [
-                'Costos/Gastos iniciales',
-                `${symbol} ${quotation.initialCost}`
             ],
             [
                 {
@@ -186,27 +191,27 @@ export const generatePdfSchedule = (payments, quotation) => {
                 }
             ],
             [
-                'Intereses',
+                'Intereses:',
                 `${symbol} ${quotation.totalInterest.toFixed(2)}`
             ],
             [
-                'Amortización del capital',
+                'Amortización del capital:',
                 `${symbol} ${quotation.totalAmort.toFixed(2)}`
             ],
             [
-                'Seguro de desgravamen',
+                'Seguro de desgravamen:',
                 `${symbol} ${quotation.totalSegDes.toFixed(2)}`
             ],
             [
-                'Seguro contra todo riesgo',
+                'Seguro contra todo riesgo:',
                 `${symbol} ${quotation.totalRisk.toFixed(2)}`
             ],
             [
-                'Comisiones periodicas',
+                'Comisiones periodicas:',
                 `${symbol} ${quotation.totalComi.toFixed(2)}`
             ],
             [
-                'Portes / Gastos de adm',
+                'Portes / Gastos de adm:',
                 `${symbol} ${quotation.totalPortes.toFixed(2)}`
             ],
         ]

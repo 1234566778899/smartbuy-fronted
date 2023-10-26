@@ -8,12 +8,15 @@ export const NavApp = ({ logged = false }) => {
     const [user, setuser] = useState(null);
     const navigate = useNavigate();
     const handleClick = (event) => {
-        const box = document.querySelector('#box_out');
-        const avatar = document.querySelector('#box_avatar');
-        if (box && avatar && !box.contains(event.target) && !avatar.contains(event.target)) {
-            closeModal('#box_out');
-        }
+        close('#box_out', '#box_avatar', event);
     };
+    const close = (cont, value, event) => {
+        const box = document.querySelector(cont);
+        const avatar = document.querySelector(value);
+        if (box && avatar && !box.contains(event.target) && !avatar.contains(event.target)) {
+            closeModal(cont);
+        }
+    }
     const getUser = () => {
         const userId = localStorage.getItem('id');
         axios.get(`${CONFI.uri}/user/find/${userId}`)

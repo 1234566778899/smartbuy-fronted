@@ -7,7 +7,7 @@
     transform: translateY(30px);
     border-radius: 10px;
     position: absolute;
-    z-index: 1;
+    z-index: 15;
     right: 0;
     left: 0;
     margin-left: auto;
@@ -218,7 +218,7 @@
     top: 0px;
     margin-left: auto;
     margin-right: auto;
-    z-index: 4;
+    z-index: 6;
     width: 350px;
     background-color: #333333;
     color: white;
@@ -237,36 +237,6 @@
     }
 }
 
-.acordeon {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0px 10px;
-    padding-bottom: 5px;
-    margin-bottom: 15px;
-    background-color: #eeeeee;
-    cursor: pointer;
-}
-
-.acordeon i {
-    transform: translateY(5px);
-}
-
-.acordeon:hover {
-    background-color: #e0e0e0;
-}
-
-.acordeon-content {
-    padding: 0px 5px;
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.5s ease;
-}
-
-.acordeon-open {
-    display: none;
-}
-
 .table-schedule {
     overflow: auto;
     box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.2);
@@ -282,7 +252,6 @@
     padding: 7px 7px;
     border-bottom: 1px solid #EBEBEB;
 }
-
 
 .table-schedule table tr th {
     background-color: #EAEAEA;

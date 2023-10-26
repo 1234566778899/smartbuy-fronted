@@ -1,11 +1,12 @@
-import React from 'react'
-import { closeModal } from '../utils'
+import React, { useRef } from 'react'
+import { closeModal, showToastInfo } from '../utils'
 import { CARS } from '../utils/Cars'
 import { useState } from 'react'
 
 export const FindCarApp = ({ selectCar }) => {
     const [carFiltered, setCarFiltered] = useState(CARS);
     const [carSelected, setCarSelected] = useState({});
+    const price = useRef();
     const filterCar = (param) => {
         param = param.toLowerCase();
         setCarFiltered(CARS.filter(car => car.name.toLowerCase().includes(param) || car.description.toLowerCase().includes(param)));
@@ -13,7 +14,7 @@ export const FindCarApp = ({ selectCar }) => {
 
     return (
         <div id='find_car'>
-            <div className="box">
+            <div className="box" id='box_find_car'>
                 <h4 className='text-center'>Seleccione un auto</h4>
                 <hr />
                 <div className='form-group'>
@@ -41,6 +42,7 @@ export const FindCarApp = ({ selectCar }) => {
                     <div className="d-flex align-items-center w-50">
                         <span className='icon-currency'>$</span>
                         <input
+                            ref={price}
                             type="text"
                             className='form-control bg-white inp-price mt-2'
                             value={carSelected.price || ''}
@@ -48,6 +50,7 @@ export const FindCarApp = ({ selectCar }) => {
                             onChange={(e) => setCarSelected(car => ({ ...car, price: e.target.value }))}
                         />
                         <button className='btn btn-primary ml-2 mt-1' onClick={() => {
+                            if (price.current.value.trim() == '') return showToastInfo('Debe seleccionar un vehículo');
                             selectCar(carSelected);
                             closeModal('#find_car')
                         }}>Aceptar</button>
