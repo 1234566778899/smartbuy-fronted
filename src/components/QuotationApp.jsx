@@ -94,7 +94,7 @@ export const QuotationApp = () => {
                                     <tr key={quo._id}>
                                         <td>{i + 1}</td>
                                         <td>{moment(quo.createdAt).format('DD/MM/YYYY')}</td>
-                                        <td>{quo.customer.dni}</td>
+                                        <td>{quo.customer.documentNumber}</td>
                                         <td>{quo.customer.name}</td>
                                         <td>{quo.customer.lname}</td>
                                         <td>{quo.van.toFixed(2)}</td>
