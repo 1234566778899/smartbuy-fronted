@@ -235,7 +235,7 @@ export const generatePdfSchedule = (payments, quotation) => {
                     content: '',
                     colSpan: 11
                 },
-                quotation.loanAmount
+                quotation.loanAmount.toFixed(2)
             ],
             ...payments.map(pay => (
                 [

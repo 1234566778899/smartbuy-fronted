@@ -64,7 +64,7 @@ export const QuotationApp = () => {
                 <form onSubmit={handleSubmit(searchQuotation)} className='d-flex form-search-quotation py-1'>
                     <input type="date" className='form-control ml-1 bg-white' placeholder='Inicio' {...register('inicio')} />
                     <input type="date" className='form-control ml-1 bg-white' placeholder='Fin' {...register('fin')} />
-                    <input type="text" className='form-control ml-1 bg-white' placeholder='DNI'{...register('dni')} />
+                    <input type="text" className='form-control ml-1 bg-white' placeholder='DNI'{...register('documentNumber')} />
                     <input type="text" className='form-control ml-1 bg-white' placeholder='Nombre'{...register('name')} />
                     <input type="text" className='form-control ml-1 bg-white' placeholder='Apellido'{...register('lname')} />
                     <button className='btn btn-success' type='submit'>Buscar</button>
@@ -99,7 +99,7 @@ export const QuotationApp = () => {
                                         <td>{quo.customer.lname}</td>
                                         <td>{quo.van.toFixed(2)}</td>
                                         <td>{quo.tir.toFixed(2)}</td>
-                                        <td>{quo.loanAmount}</td>
+                                        <td>{quo.loanAmount.toFixed(2)}</td>
                                         <td>{quo.fee.toFixed(2)} %</td>
                                         <td>{quo.numDues}</td>
                                         <td><button className='btn' onClick={() => lookPdf(quo)}>Descargar</button></td>

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { NavApp } from './NavApp';
 import { generatePdfSchedule } from '../utils/pdf/Schedule';
-import { FUNC_TIR, closeModal, setVisible, showToastInfo } from '../utils';
+import { setVisible, showToastInfo } from '../utils';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Finance } from 'financejs';
@@ -20,9 +19,11 @@ export const ScheduleApp = ({ handleVisible, quotation }) => {
     const [tasaDes, settasaDes] = useState(0);
     const [TCEA, setTCEA] = useState();
     const [van, setvan] = useState();
-    
+
     const generateSchedule = () => {
-        let { frecuencyPay, daysYear, numDues, fee, insure, loanAmount, risk, portes, cok, gastAdm, comision } = quotation;
+        let { frecuencyPay, finalDue, daysYear, numDues, fee, insure, loanAmount, risk, portes, cok, gastAdm, comision } =
+            quotation;
+        console.log(finalDue);
         let si = loanAmount;
         cok = Math.pow(1 + (cok / 100), frecuencyPay / daysYear) - 1;
         let sum = 0;
@@ -30,11 +31,15 @@ export const ScheduleApp = ({ handleVisible, quotation }) => {
         let flows = [-loanAmount];
         settasaDes(cok);
         let totalCuota = 0, totalAmort = 0, totalDes = 0, totalRisk = 0, totalComis = 0, totalPortes = 0;
-        for (let index = 0; index < numDues; index++) {
-            let tep = Math.pow(1 + (fee / 100), 30 / 360) - 1;
+        for (let index = 0; index < numDues + 1; index++) {
+            let tep = Math.pow(1 + fee / 100, frecuencyPay / daysYear) - 1;
             let interes = tep + (insure / 100);
             let cuota = loanAmount * ((interes * Math.pow(1 + interes, numDues)) / (Math.pow(1 + interes, numDues) - 1));
-            let i = si * (Math.pow(1 + (fee / 100), 30 / 360) - 1);
+            if (index == numDues) {
+                cuota = 0;
+                si = 0;
+            }
+            let i = si * tep;
             totalCuota += cuota;
             let segDes = (insure / 100) * si;
             totalDes += segDes;
@@ -42,10 +47,12 @@ export const ScheduleApp = ({ handleVisible, quotation }) => {
             totalComis += comision;
             totalPortes += (portes + gastAdm);
             let a = cuota - i - segDes;
+            if (index == numDues) a = 0;
             totalAmort += a;
             let sf = si - a;
             let adminExpense = 0;
             let flujo = cuota + portes + comision + adminExpense + risk + gastAdm;
+            if (index == numDues) flujo += finalDue;
             flows.push(flujo);
             sum += (flujo / Math.pow(1 + cok, index + 1));
             pays.push({
@@ -68,7 +75,7 @@ export const ScheduleApp = ({ handleVisible, quotation }) => {
             si = sf;
         }
         setinteres(totalCuota - totalAmort - totalDes);
-        setAmortizacion(totalAmort);
+        setAmortizacion(totalAmort + finalDue);
         setSegDes(totalDes);
         setSegRisk(totalRisk);
         setcomi(totalComis);
@@ -81,10 +88,8 @@ export const ScheduleApp = ({ handleVisible, quotation }) => {
         setPayments(pays);
     }
     useEffect(() => {
-        if (quotation) {
-            generateSchedule();
-        }
-    }, [quotation])
+        generateSchedule();
+    }, [])
     const handleTeaChange = (value, index, key, min = 0, max = 0) => {
         const updatedPayments = [...payments];
         if (min == 0 && max == 0) updatedPayments[index][key] = value;
@@ -97,7 +102,7 @@ export const ScheduleApp = ({ handleVisible, quotation }) => {
             setPayments(updatedPayments);
             return;
         }
-        let { numDues, insure, loanAmount, risk, comision, portes, gastAdm, frecuencyPay, daysYear, cok } = quotation;
+        let { numDues, insure, finalDue, loanAmount, risk, comision, portes, gastAdm, frecuencyPay, daysYear, cok } = quotation;
         cok = Math.pow(1 + (cok / 100), frecuencyPay / daysYear) - 1;
         let sum = 0, totalCuota = 0, totalAmort = 0, totalDes = 0, totalRisk = 0, totalComis = 0, totalPortes = 0;
         let flows = [-loanAmount];
@@ -105,10 +110,10 @@ export const ScheduleApp = ({ handleVisible, quotation }) => {
         for (let index = 0; index < updatedPayments.length; index++) {
             let pay = updatedPayments[index];
             let fee = parseFloat(pay.tea) || 0;
-            let tep = Math.pow(1 + (fee / 100), 30 / 360) - 1;
+            let tep = Math.pow(1 + fee / 100, frecuencyPay / daysYear) - 1;
             let interes = tep + (insure / 100);
             let cuota = 0;
-            let i = si * (Math.pow(1 + (fee / 100), 30 / 360) - 1);
+            let i = si * tep;
             let segDes = (insure / 100) * si;
             totalDes += segDes;
             totalRisk += risk;
@@ -119,6 +124,7 @@ export const ScheduleApp = ({ handleVisible, quotation }) => {
             let flujo = 0;
             if (pay.pg == 'S') {
                 cuota = si * ((interes * Math.pow(1 + interes, numDues - index)) / (Math.pow(1 + interes, numDues - index) - 1));
+                if (index == numDues) cuota = 0;
                 a = cuota - i - segDes;
                 sf = si - a;
                 flujo = cuota + pay.portes + pay.comision + pay.gastAdm + pay.segRis;
@@ -130,7 +136,7 @@ export const ScheduleApp = ({ handleVisible, quotation }) => {
                 sf = si - a;
                 flujo = cuota + pay.portes + pay.comision + pay.gastAdm + pay.segRis + segDes;
             }
-            
+            if (index == numDues) flujo += finalDue;
             sum += (flujo / Math.pow(1 + cok, index + 1));
             totalCuota += cuota;
             totalAmort += a;
@@ -146,16 +152,16 @@ export const ScheduleApp = ({ handleVisible, quotation }) => {
                 a,
                 segDes,
                 segRis: pay.segRis,
-                comision: 0,
+                comision,
                 portes: pay.portes,
-                gastAdm: 0,
+                gastAdm,
                 sf,
                 flujo,
             };
             si = sf;
         }
         setinteres(totalCuota - totalAmort - totalDes);
-        setAmortizacion(totalAmort);
+        setAmortizacion(totalAmort + finalDue);
         setSegDes(totalDes);
         setSegRisk(totalRisk);
         setcomi(totalComis);
@@ -168,7 +174,7 @@ export const ScheduleApp = ({ handleVisible, quotation }) => {
         setPayments(updatedPayments);
     };
     const changeManyTea = () => {
-        let numDues = 180;
+        let { numDues } = quotation;
         let value = document.querySelector('#select_tea').value;
         let _min = document.querySelector('#inp_min');
         let _max = document.querySelector('#inp_max');
@@ -199,7 +205,7 @@ export const ScheduleApp = ({ handleVisible, quotation }) => {
             <br />
             <div className="d-flex justify-content-between align-items-center">
                 <div className='d-flex justify-content-between align-items-center'>
-                    <i className="fa-solid fa-backward icon" onClick={() => handleVisible()}></i>
+                    <i className="fa-solid fa-circle-chevron-left icon" onClick={() => handleVisible()}></i>
                     <h4 className='ml-3'>PREVISUALIZACIÓN</h4>
                 </div>
                 <button className='btn btn-primari' onClick={() => submitGenerateQuotation()}>GENERAR PLAN DE PAGOS</button>
@@ -302,7 +308,7 @@ export const ScheduleApp = ({ handleVisible, quotation }) => {
                         <tr>
                             <td>0</td>
                             <td colSpan={13}></td>
-                            <td>{quotation && quotation.loanAmount}</td>
+                            <td>{quotation && quotation.loanAmount.toFixed(2)}</td>
                         </tr>
                         {
                             payments.map(pay => (

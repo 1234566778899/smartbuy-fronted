@@ -3,7 +3,7 @@ export const CARS = [
         id: 1,
         brand: 'Porsche',
         model: '911',
-        price: 185000,
+        price: 16000,
         yearManufactured: 2023,
         color: 'Red',
         img: 'https://acroadtrip.blob.core.windows.net/catalogo-imagenes/xl/RT_V_655b66b7b2814ee9a866a1692313f7f1.jpg',
