@@ -62,6 +62,7 @@ export const AddQuotationApp = () => {
         setQuotation({ ...quatotationData, car, customer: user });
         setVisible('#box_add_datatation', false);
         setVisible('#box_schedule', true);
+
     }
 
     useEffect(() => {
@@ -164,7 +165,7 @@ export const AddQuotationApp = () => {
                                     <span className='form-label'>Cuota Inicial</span>
                                     <select className='form-control' {...register('initial_due', { required: true })}>
                                         <option value="20">20%</option>
-                                        <option value="30">30%</option>
+                                        {/* <option value="30">30%</option> */}
                                     </select>
                                 </div>
                                 <div className="form-group mt-2 w-100 ml-2">

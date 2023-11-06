@@ -211,6 +211,7 @@ export const ScheduleApp = ({ handleVisible, quotation }) => {
                 <button className='btn btn-primari' onClick={() => submitGenerateQuotation()}>GENERAR PLAN DE PAGOS</button>
             </div>
             <hr />
+            
             <div className="row">
                 <div className="col-md-6">
                     <table className='table-cost w-100'>

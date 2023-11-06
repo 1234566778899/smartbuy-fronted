@@ -45,7 +45,7 @@ export const EditCustomerApp = ({ customer, setUser, getCustomers }) => {
                                 <label className='form-label'>Tipo de documento</label>
                                 <select className='form-control' {...register('documentType')}>
                                     <option value="DNI">DNI</option>
-                                    <option value="CE">Carné de Extranjería:</option>
+                                    <option value="CE">Carné de Extranjería</option>
                                     <option value="P">Pasaporte</option>
                                 </select>
                             </div>

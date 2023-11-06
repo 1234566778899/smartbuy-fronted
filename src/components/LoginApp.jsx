@@ -7,12 +7,11 @@ import { useNavigate } from 'react-router-dom'
 import '../styles/main.css'
 import { showToastInfo } from '../utils'
 import { CONFI } from '../utils/config'
-
-
+import logo from '../assets/logo.png'
+import fondo from '../assets/student-849825_1280.jpg'
 export const LoginApp = () => {
     const navigate = useNavigate();
     const { register, handleSubmit, formState: { errors } } = useForm();
-    const [alert, setAlert] = useState(null);
     const login = (data) => {
         data.username = data.email;
         axios.post(`${CONFI.uri}/user/login`, data)
@@ -32,28 +31,31 @@ export const LoginApp = () => {
                 <NavApp />
                 <div className="container">
                     <br />
-                    <div className="row">
-                        <div className="col-md-4 ">
-
-                        </div>
+                    <div className="row shadow p-3" style={{ backgroundColor: '#FEFEFE' }}>
                         <div className="col-md-4 p-3 mt-4 box-login">
+                            <div className='text-center'>
+                                <img src={logo} alt="logo" width={50} />
+                            </div>
+                            <br />
                             <h3 className='text-center'>INICIAR SESIÓN</h3>
                             <br />
                             <form onSubmit={handleSubmit(login)}>
                                 <div className="form-group">
-                                    <label>Correo electrónico</label>
-                                    <input  {...register('email', { required: true })} type="text" />
+                                    <span>Correo electrónico</span>
+                                    <input  {...register('email', { required: true })} type="text" placeholder='you@example.com'/>
                                     {errors.email && <span className='alerta'>Debe ingresar su correo o nombre de usuario</span>}
                                 </div>
                                 <div className="form-group">
-                                    <label>Contraseña</label>
-                                    <input {...register('password', { required: true })} type="password" />
+                                    <span>Contraseña</span>
+                                    <input {...register('password', { required: true })} type="password" placeholder='Enter 6 character or more'/>
                                     {errors.password && <span className='alerta'>Debe ingresar contraseña</span>}
                                 </div>
                                 <button className='btn btn-primari mt-3 w-100'>Login</button>
-                                {alert && <p className='alert alert-danger mt-3'>{alert}</p>}
                                 <p className='text-center mt-3'>¿No tienes una cuenta? <a href="#" onClick={() => navigate('/register')}><strong>Registrate</strong></a></p>
                             </form>
+                        </div>
+                        <div className="col-md-8 ">
+                            <img src={fondo} alt="img" className='img-fluid back-img' />
                         </div>
                     </div>
                 </div>

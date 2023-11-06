@@ -31,9 +31,13 @@ export const NavApp = ({ logged = false }) => {
                 }
             })
     }
+
+    const openNav = () => {
+        const doc1 = document.querySelector('#nav_collapse');
+        doc1.classList.toggle('hide');
+    }
     useEffect(() => {
         getUser();
-
         document.addEventListener('click', handleClick);
         return () => {
             document.removeEventListener('click', handleClick);
@@ -44,12 +48,12 @@ export const NavApp = ({ logged = false }) => {
         <>
             <nav className="navbar navbar-expand-lg bg-darki navbar-dark py-2" data-bs-theme="dark">
                 <div className="container">
-                    <a className="navbar-brand" href="#" onClick={() => { navigate('/login') }}><img src={logo} alt="logo" width={30} style={{ color: 'white' }} /> SMARTBUY</a>
-                    <button className="navbar-toggler" onClick={() => openAcordeon('#nav_collapse')} type="button" >
+                    <a className="navbar-brand" href="#" onClick={() => { navigate('/login') }}> SMARTBUY</a>
+                    <button className="navbar-toggler" type="button" onClick={() => openNav()}>
                         <span className="navbar-toggler-icon"></span>
                     </button>
-                    <div id="nav_collapse">
-                        <ul className="navbar-nav ml-auto">
+                    <div id="nav_collapse" className='hide w-100'>
+                        <ul className="navbar-nav justify-content-end">
                             {
                                 !logged && (
                                     <>

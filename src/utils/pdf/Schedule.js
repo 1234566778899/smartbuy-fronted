@@ -64,6 +64,7 @@ export const generatePdfSchedule = (payments, quotation) => {
         const cadTotal = t.length ? `Total ${t.map(formatPeriod).join(',')}` : '';
         if (!cadParcial && !cadTotal) return 'No aplica';
         return `${cadParcial} ${cadTotal}`.trim();
+        
     }
 
     const info = {
