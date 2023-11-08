@@ -40,7 +40,7 @@ export const CustomerApp = () => {
     }
     const searchCustomers = (param) => {
         param = param.toLowerCase();
-        setUsersFiltered(users.filter(u => u.name.toLowerCase().includes(param) || u.dni.toLowerCase().includes(param) || u.lname.toLowerCase().includes(param)));
+        setUsersFiltered(users.filter(u => u.name.toLowerCase().includes(param) || u.documentNumber.toLowerCase().includes(param) || u.lname.toLowerCase().includes(param)));
     }
     useEffect(() => {
         getCustomers();
