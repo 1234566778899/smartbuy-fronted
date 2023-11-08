@@ -31,8 +31,9 @@ export const LoginApp = () => {
                 <NavApp />
                 <div className="container">
                     <br />
-                    <div className="row shadow p-3" style={{ backgroundColor: '#FEFEFE' }}>
-                        <div className="col-md-4 p-3 mt-4 box-login">
+                    <div className="row shadow p-3 bg-dark" style={{ backgroundColor: '#FEFEFE' }}>
+                        <div className="col-md-4"></div>
+                        <div className="col-md-4 p-3 mt-4 box-login bg-white">
                             <div className='text-center'>
                                 <img src={logo} alt="logo" width={50} />
                             </div>
@@ -54,8 +55,8 @@ export const LoginApp = () => {
                                 <p className='text-center mt-3'>¿No tienes una cuenta? <a href="#" onClick={() => navigate('/register')}><strong>Registrate</strong></a></p>
                             </form>
                         </div>
-                        <div className="col-md-8 ">
-                            <img src={fondo} alt="img" className='img-fluid back-img' />
+                        <div className="col-md-4 ">
+                           
                         </div>
                     </div>
                 </div>

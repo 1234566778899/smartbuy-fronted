@@ -6,8 +6,6 @@ import { CONFI } from '../utils/config';
 export const ChartArea = () => {
 
     useEffect(() => {
-
-
         window.google.charts.load('current', { 'packages': ['corechart'] });
         window.google.charts.setOnLoadCallback(drawChart);
 
