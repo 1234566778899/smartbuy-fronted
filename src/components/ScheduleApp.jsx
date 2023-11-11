@@ -23,7 +23,6 @@ export const ScheduleApp = ({ handleVisible, quotation }) => {
     const generateSchedule = () => {
         let { frecuencyPay, finalDue, daysYear, numDues, fee, insure, loanAmount, risk, portes, cok, gastAdm, comision } =
             quotation;
-        console.log(finalDue);
         let si = loanAmount;
         cok = Math.pow(1 + (cok / 100), frecuencyPay / daysYear) - 1;
         let sum = 0;

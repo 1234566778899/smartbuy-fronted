@@ -46,7 +46,7 @@ export const AddQuotationApp = () => {
             numDues: totalCuotas,
             fee: Number(tea),
             tem: Number(tem),
-            insure: Number(allForm.seguroDes),
+            insure: Number(allForm.credit_life_insurence),
             loanAmount: saldoFinanciar,
             risk: segRisk,
             portes: Number(allForm.shipping),
@@ -61,12 +61,10 @@ export const AddQuotationApp = () => {
         }
         setQuotation({ ...quatotationData, car, customer: user });
         setVisible('#box_add_datatation', false);
-        setVisible('#box_schedule', true);
-
     }
 
     useEffect(() => {
-        let _tea = (allForm.rate_type == 'efectiva' ? allForm.fee : (Math.pow(1 + (allForm.fee / 100) / (allForm.days_year / allForm.capPeriod), (allForm.days_year / allForm.capPeriod)) - 1) * 100) || 0;
+        let _tea = (allForm.rate_type == 'efectiva' ? Number(allForm.fee) : (Math.pow(1 + (allForm.fee / 100) / (allForm.days_year / allForm.capPeriod), (allForm.days_year / allForm.capPeriod)) - 1) * 100) || 0;
         let _tem = (Math.pow(1 + _tea / 100, allForm.frecuency_pay / allForm.days_year) - 1) * 100;
         let _prestamo = (car && ((100 - allForm.initial_due) / 100) * car.price + Number(allForm.activation_fee) + Number(allForm.appraisal) + Number(allForm.notarial_cost) + Number(allForm.registration_cost) + Number(allForm.study_fee)) || 0;
         let cf = allForm.num_years == '2' ? 50 : 40;
@@ -74,7 +72,8 @@ export const AddQuotationApp = () => {
         let _cuotaInicial = (car && (allForm.initial_due / 100) * car.price) || 0;
         let _totalCuotas = (allForm.days_year / allForm.frecuency_pay) * allForm.num_years || 0;
         let _saldoFinanciar = (_prestamo - (_cuotaFinal / Math.pow(1 + (_tem / 100) + (allForm.credit_life_insurence / 100), _totalCuotas + 1))) || 0;
-        let _segRisk = (car && (allForm.risk_insurence / 100) * car.price / (allForm.days_year / allForm.frecuency_pay)) || 0;
+        let subd = allForm.timeRisk == 'mensual' ? 1 : (allForm.days_year / 30);
+        let _segRisk = (car && (allForm.risk_insurence / 100) * car.price / subd) || 0;
         setCuotaFinal(_cuotaFinal);
         setCuotaInicial(_cuotaInicial);
         settea(_tea);
@@ -90,14 +89,12 @@ export const AddQuotationApp = () => {
             <FindCarApp selectCar={setcar} />
             <NavApp logged={true} />
             <form className="container" onSubmit={handleSubmit(submitSchedule)}>
-                <div id="box_schedule" style={{ display: 'none' }}>
-                    {
-                        quotation && (< ScheduleApp quotation={quotation} handleVisible={() => {
-                            setVisible('#box_add_datatation', true);
-                            setVisible('#box_schedule', false);
-                        }} />)
-                    }
-                </div>
+                {
+                    quotation && (< ScheduleApp quotation={quotation} handleVisible={() => {
+                        setVisible('#box_add_datatation', true);
+                        setQuotation(null);
+                    }} />)
+                }
                 <div id="box_add_datatation">
                     <br />
                     <h4>GENERAR COTIZACIÓN</h4>
@@ -301,7 +298,7 @@ export const AddQuotationApp = () => {
 
                                     <div className="w-100 mr-1">
                                         <span className='form-label'>Seguro de desgravamen (%)</span>
-                                        <input type="number" step={0.00001} className='form-control' placeholder='0.0502%' {...register('credit_life_insurence', {
+                                        <input type="number" step={0.00001} className='form-control ml-1' placeholder='0.0502%' {...register('credit_life_insurence', {
                                             validate: {
                                                 positive: value => parseFloat(value) >= 0 || 'Debe ser un número positivo',
                                             }
@@ -309,11 +306,17 @@ export const AddQuotationApp = () => {
                                     </div>
                                     <div className="w-100 ml-1">
                                         <span className='form-label'>Seguro de riesgo (%)</span>
-                                        <input type="number" step={0.00001} className='form-control' placeholder='0.0502%' {...register('risk_insurence', {
-                                            validate: {
-                                                positive: value => parseFloat(value) >= 0 || 'Debe ser un número positivo',
-                                            }
-                                        })} />
+                                        <div className="d-flex">
+                                            <select className='form-control mr-1' {...register('timeRisk')}>
+                                                <option value="mensual">Mensual</option>
+                                                <option value="anual">Anual</option>
+                                            </select>
+                                            <input type="number" step={0.00001} className='form-control' placeholder='0.0502%' {...register('risk_insurence', {
+                                                validate: {
+                                                    positive: value => parseFloat(value) >= 0 || 'Debe ser un número positivo',
+                                                }
+                                            })} />
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -328,19 +331,19 @@ export const AddQuotationApp = () => {
                             <div className="d-flex">
                                 <div className='form-group w-100 mr-1'>
                                     <span className='form-label'>Tasa efectiva anual (TEA)</span>
-                                    <input type="text" className='form-control' readOnly {...register('tea')}
-                                        value={tea} />
+                                    <input type="text" className='form-control' readOnly
+                                        value={tea ? tea.toFixed(5) : 0} />
                                 </div>
                                 <div className='form-group w-100 ml-1'>
                                     <span className='form-label'>Tasa efectiva mensual (TEM)</span>
-                                    <input type="text" className='form-control' readOnly value={tem} />
+                                    <input type="text" className='form-control' readOnly value={tem ? tem.toFixed(5) : 0} />
                                 </div>
                             </div>
 
                             <div className="d-flex">
                                 <div className='w-100 mr-1'>
                                     <span className='form-label'>Cuota inicial</span>
-                                    <input type="text" className='form-control' readOnly value={cuotaInicial} {...register('cuotaInicial')} />
+                                    <input type="text" className='form-control' readOnly value={cuotaInicial} />
                                 </div>
                                 <div className='w-100 ml-1'>
                                     <span className='form-label'>Cuota final</span>
@@ -366,16 +369,18 @@ export const AddQuotationApp = () => {
                             <div className="d-flex">
                                 <div className='w-100 mr-1'>
                                     <span className='form-label'>% de Seguro desgrav. per.</span>
-                                    <input type="text" className='form-control' readOnly value={allForm.credit_life_insurence * allForm.frecuency_pay / 30} {...register('seguroDes')} />
+                                    <input type="text" className='form-control' readOnly
+                                        value={allForm.credit_life_insurence}
+                                    />
                                 </div>
                                 <div className='w-100 ml-1'>
                                     <span className='form-label'>Seguro riesgo</span>
-                                    <input type="text" className='form-control' readOnly value={segRisk} />
+                                    <input type="text" className='form-control' readOnly value={segRisk.toFixed(2)} />
                                 </div>
                             </div>
                             <div className='w-100 mt-2'>
                                 <span className='form-label'>Saldo a financiar con cuotas</span>
-                                <input type="text" className='form-control' readOnly value={saldoFinanciar} />
+                                <input type="text" className='form-control' readOnly value={saldoFinanciar.toFixed(2)} />
                             </div>
                         </div>
                     </div>
