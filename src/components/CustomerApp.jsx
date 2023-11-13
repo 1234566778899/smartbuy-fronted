@@ -46,7 +46,7 @@ export const CustomerApp = () => {
         getCustomers();
     }, [])
     return (
-        <>
+        <div className='summary'>
             <NavApp logged={true} />
             {userSelected && <EditCustomerApp customer={userSelected} setUser={setUserSelected} getCustomers={getCustomers} />}
             <div className="container">
@@ -66,7 +66,7 @@ export const CustomerApp = () => {
                         <div className='table-customer'>
                             <table className='text-center bg-white'>
                                 <thead>
-                                    <tr>
+                                    <tr className='bg-dark text-white'>
                                         <th>N°</th>
                                         <th>DNI</th>
                                         <th>NOMBRE</th>
@@ -113,8 +113,8 @@ export const CustomerApp = () => {
                     <h5 className='text-center'>Registrar cliente</h5>
                     <hr />
                     <form onSubmit={handleSubmit(addCustomer)}>
-                        <div className="input-group">
-                            <div className='form-group'>
+                        <div className="d-flex">
+                            <div className='w-100 mr-1'>
                                 <label className='form-label'>Tipo de documento</label>
                                 <select className='form-control' {...register('documentType')}>
                                     <option value="DNI">DNI</option>
@@ -122,7 +122,7 @@ export const CustomerApp = () => {
                                     <option value="P">Pasaporte</option>
                                 </select>
                             </div>
-                            <div className='form-group ml-2'>
+                            <div className='w-100 ml-1'>
                                 <label className='form-label'>Número de documento</label>
                                 <input {...register('documentNumber', { required: true })} type="text" className='form-control' placeholder='4556756..' />
                             </div>
@@ -139,12 +139,12 @@ export const CustomerApp = () => {
                             <label className='form-label'>Dirección</label>
                             <input {...register('address', { required: true })} type="text" className='form-control' placeholder='Av. ..' />
                         </div>
-                        <div className="input-group">
-                            <div className='form-group'>
+                        <div className="d-flex">
+                            <div className='w-100 mr-1'>
                                 <label className='form-label'>Teléfono</label>
                                 <input {...register('telephone', { required: true, })} type="text" className='form-control' placeholder='93..' />
                             </div>
-                            <div className='form-group ml-2'>
+                            <div className='w-100 ml-1'>
                                 <label className='form-label'>Email</label>
                                 <input {...register('email', { required: true, })} type="email" className='form-control' placeholder='...@gmail.com' />
                             </div>
@@ -154,7 +154,7 @@ export const CustomerApp = () => {
                 </div>
             </div>
             <br />
-        </>
+        </div>
 
     )
 }

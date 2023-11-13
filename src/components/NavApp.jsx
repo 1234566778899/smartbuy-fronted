@@ -46,7 +46,7 @@ export const NavApp = ({ logged = false }) => {
 
     return (
         <>
-            <nav className="navbar navbar-expand-lg bg-darki navbar-dark py-2" data-bs-theme="dark">
+            <nav className="navbar navbar-expand-lg bg-dark navbar-dark py-2" data-bs-theme="dark">
                 <div className="container">
                     <a className="navbar-brand" href="#" onClick={() => { navigate('/login') }}> SMARTBUY</a>
                     <button className="navbar-toggler" type="button" onClick={() => openNav()}>
@@ -73,7 +73,10 @@ export const NavApp = ({ logged = false }) => {
                                             <a className={`nav-link ${localStorage.getItem('nav') == 'client' ? 'active' : ''}`} href="#" onClick={() => { navigate('/customer'); localStorage.setItem('nav', 'client') }}>Clientes</a>
                                         </li>
                                         <li className="nav-item">
-                                            <a className={`nav-link ${localStorage.getItem('nav') == 'quotation' ? 'active' : ''}`} href="#" onClick={() => { navigate('/quotation'); localStorage.setItem('nav', 'quotation') }}>Cotizaciones</a>
+                                            <a className={`nav-link ${localStorage.getItem('nav') == 'quotation' ? 'active' : ''}`} href="#" onClick={() => { navigate('/quotation'); localStorage.setItem('nav', 'quotation') }}>Historial</a>
+                                        </li>
+                                        <li className="nav-item">
+                                            <a className={`nav-link ${localStorage.getItem('nav') == 'add' ? 'active' : ''}`} href="#" onClick={() => { navigate('/add/quotation'); localStorage.setItem('nav', 'add') }}>Agregar cotizacion</a>
                                         </li>
                                         <li className="nav-item">
                                             <a className={`nav-link ${localStorage.getItem('nav') == 'dashboard' ? 'active' : ''}`} href="#" onClick={() => { navigate('/dashboard'); localStorage.setItem('nav', 'dashboard') }}>Dashboard</a>

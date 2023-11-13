@@ -29,7 +29,7 @@ export const DashboardApp = () => {
         getQuotations();
     }, [])
     return (
-        <>
+        <div className='summary'>
             <NavApp logged={true} />
             <div className="container">
                 <br />
@@ -57,6 +57,6 @@ export const DashboardApp = () => {
 
                 </div>
             </div>
-        </>
+        </div>
     )
 }

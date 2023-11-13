@@ -1,12 +1,18 @@
-import React, { useRef } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { closeModal, showToastInfo } from '../utils'
 import { CARS } from '../utils/Cars'
 import { useState } from 'react'
 
-export const FindCarApp = ({ selectCar }) => {
-    const [carFiltered, setCarFiltered] = useState(CARS);
+export const FindCarApp = ({ selectCar, currency, setDialog }) => {
+    console.log(currency);
+    const [carFiltered, setCarFiltered] = useState([]);
     const [carSelected, setCarSelected] = useState({});
     const price = useRef();
+
+    useEffect(() => {
+        setCarFiltered(CARS.map(x => currency == 'PEN' ? ({ ...x, price: x.price * 3.80 }) : ({ ...x })))
+    }, [currency])
+
     const filterCar = (param) => {
         param = param.toLowerCase();
         setCarFiltered(CARS.filter(car => car.name.toLowerCase().includes(param) || car.description.toLowerCase().includes(param)));
@@ -30,7 +36,7 @@ export const FindCarApp = ({ selectCar }) => {
                                 <img src={car.img} alt="img-auto" />
                                 <span><strong>{car.brand} {car.model}</strong></span><br />
                                 <span>{car.yearManufactured} {car.color}</span>
-                                <h6>{car.price.toLocaleString(undefined, { style: 'currency', currency: 'USD' })}</h6>
+                                <h6>{currency == 'USD' ? '$' : 'S/.'} {car.price}</h6>
                             </div>
                         ))
                     }
@@ -38,7 +44,7 @@ export const FindCarApp = ({ selectCar }) => {
 
                 <br />
                 <div className='d-flex justify-content-between'>
-                    <button className='btn btn-danger' onClick={() => closeModal('#find_car')}>Cancelar</button>
+                    <button className='btn btn-danger' onClick={() => setDialog(false)}>Cancelar</button>
                     <div className="d-flex align-items-center w-50">
                         <span className='icon-currency'>$</span>
                         <input
@@ -52,7 +58,7 @@ export const FindCarApp = ({ selectCar }) => {
                         <button className='btn btn-primary ml-2 mt-1' onClick={() => {
                             if (price.current.value.trim() == '') return showToastInfo('Debe seleccionar un vehículo');
                             selectCar(carSelected);
-                            closeModal('#find_car')
+                            setDialog(false);
                         }}>Aceptar</button>
                     </div>
                 </div>

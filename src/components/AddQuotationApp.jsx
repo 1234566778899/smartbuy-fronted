@@ -5,10 +5,15 @@ import { openModal, setVisible, showToastInfo } from '../utils'
 import { FindCarApp } from './FindCarApp'
 import { useForm } from 'react-hook-form'
 import { ScheduleApp } from './ScheduleApp'
+import { useParams } from 'react-router-dom'
+import axios from 'axios'
+import { CONFI } from '../utils/config'
+import { Entidades } from '../utils/Entidades'
 
 export const AddQuotationApp = () => {
-
-    const { register, handleSubmit, formState: { errors }, watch } = useForm({
+    const { id } = useParams();
+    const [quotationReference, setQuotationReference] = useState();
+    const { register, handleSubmit, setValue, formState: { errors }, watch } = useForm({
         defaultValues: {
             notarial_cost: '100',
             registration_cost: '75',
@@ -37,6 +42,12 @@ export const AddQuotationApp = () => {
     const [cuotaFinal, setCuotaFinal] = useState(0);
     const [totalCuotas, setTotalCuotas] = useState(0);
     const [segRisk, setSegRisk] = useState(0);
+    const [initialCost, setInitialCost] = useState(0);
+    const [symbol, setSymbol] = useState('');
+    const [valorActual, setvalorActual] = useState(0);
+    const [precioReal, setPrecioReal] = useState(0);
+    const [monedaActual, setMonedaActual] = useState('PEN');
+    const [openDialog, setopenDialog] = useState(false);
     const submitSchedule = (data) => {
         if (!user) return showToastInfo('Debe seleccionar un cliente');
         if (!car) return showToastInfo('Debe seleccionar un auto');
@@ -48,6 +59,7 @@ export const AddQuotationApp = () => {
             tem: Number(tem),
             insure: Number(allForm.credit_life_insurence),
             loanAmount: saldoFinanciar,
+            monto: prestamo,
             risk: segRisk,
             portes: Number(allForm.shipping),
             cok: Number(allForm.cok),
@@ -57,24 +69,67 @@ export const AddQuotationApp = () => {
             daysYear: Number(allForm.days_year),
             initialDue: cuotaInicial,
             finalDue: cuotaFinal,
-            initialCost: 0
+            initialCost: initialCost,
+            comActivacion: Number(allForm.activation_fee),
+            comEstudio: Number(allForm.study_fee),
+            notariales: Number(allForm.notarial_cost),
+            registrales: Number(allForm.registration_cost),
+            tasacion: Number(allForm.appraisal),
+            porcInicial: Number(allForm.initial_due),
+            porcFinal: Number(allForm.final_due),
+            tasaInteres: Number(allForm.fee),
+            tipoTasa: allForm.rate_type,
+            periodo: Number(allForm.capPeriod),
+            real: precioReal,
+            estado: id ? 'renovado' : 'pendiente',
+            porcRisk: allForm.risk_insurence
         }
         setQuotation({ ...quatotationData, car, customer: user });
         setVisible('#box_add_datatation', false);
     }
+    const getQuotations = () => {
+        axios.get(`${CONFI.uri}/quotation/${id}`)
+            .then(res => {
+                setQuotationReference(res.data);
+                setvalorActual(res.data.reference - res.data.finalDue);
+                setSymbol(res.data.currency == 'USD' ? '$' : 'S/.');
+                cambiarValor(allForm.currency);
+            })
+            .catch(error => {
+                console.log(error);
+                showToastInfo('Error')
+            })
+    }
+    const cambiarValor = (moneda) => {
+        if (moneda == 'USD' && symbol == 'S/.') {
+            setvalorActual(value => value / 3.80);
+            setSymbol('$');
+            setcar(null);
+        } else if (moneda == 'PEN' && symbol == '$') {
+            setvalorActual(value => value * 3.80);
+            setSymbol('S/.');
+            setcar(null);
+        }
+    }
+    useEffect(() => {
+        if (id) getQuotations();
+        uploadDataFinance(1);
+    }, [])
 
     useEffect(() => {
         let _tea = (allForm.rate_type == 'efectiva' ? Number(allForm.fee) : (Math.pow(1 + (allForm.fee / 100) / (allForm.days_year / allForm.capPeriod), (allForm.days_year / allForm.capPeriod)) - 1) * 100) || 0;
         let _tem = (Math.pow(1 + _tea / 100, allForm.frecuency_pay / allForm.days_year) - 1) * 100;
-        let _prestamo = (car && ((100 - allForm.initial_due) / 100) * car.price + Number(allForm.activation_fee) + Number(allForm.appraisal) + Number(allForm.notarial_cost) + Number(allForm.registration_cost) + Number(allForm.study_fee)) || 0;
+        let _initialCost = (Number(allForm.activation_fee) + Number(allForm.appraisal) + Number(allForm.notarial_cost) + Number(allForm.registration_cost) + Number(allForm.study_fee)) || 0;
+        let _prestamo = (car && ((100 - allForm.initial_due) / 100) * precioReal + _initialCost) || 0;
         let cf = allForm.num_years == '2' ? 50 : 40;
-        let _cuotaFinal = (car && (cf / 100) * car.price) || 0;
-        let _cuotaInicial = (car && (allForm.initial_due / 100) * car.price) || 0;
+        let _cuotaFinal = (car && (cf / 100) * precioReal) || 0;
+        let _cuotaInicial = (car && (allForm.initial_due / 100) * precioReal) || 0;
         let _totalCuotas = (allForm.days_year / allForm.frecuency_pay) * allForm.num_years || 0;
         let _saldoFinanciar = (_prestamo - (_cuotaFinal / Math.pow(1 + (_tem / 100) + (allForm.credit_life_insurence / 100), _totalCuotas + 1))) || 0;
         let subd = allForm.timeRisk == 'mensual' ? 1 : (allForm.days_year / 30);
         let _segRisk = (car && (allForm.risk_insurence / 100) * car.price / subd) || 0;
         setCuotaFinal(_cuotaFinal);
+        setInitialCost(_initialCost);
         setCuotaInicial(_cuotaInicial);
         settea(_tea);
         settem(_tem);
@@ -82,11 +137,35 @@ export const AddQuotationApp = () => {
         setsaldoFinanciar(_saldoFinanciar);
         setPrestamo(_prestamo);
         setSegRisk(_segRisk);
-    }, [allForm])
+    }, [allForm]);
+
+    const uploadDataFinance = (id) => {
+        const entidad = Entidades.find(x => x.id == id);
+        setValue('activation_fee', entidad.comisionActivacion);
+        setValue('administration_expenses', entidad.gastosAdm);
+        setValue('appraisal', entidad.tasacion);
+        setValue('credit_life_insurence', entidad.seguroDesgravamen);
+        setValue('notarial_cost', entidad.notariales);
+        setValue('periodic_commission', entidad.periodica);
+        setValue('risk_insurence', entidad.seguroRiesgo);
+        setValue('shipping', entidad.portes);
+        setValue('registration_cost', entidad.registrales);
+        setValue('study_fee', entidad.comisionEstudio);
+    }
+    useEffect(() => {
+        setMonedaActual(allForm.currency);
+    }, [allForm.currency])
+
+    useEffect(() => {
+        if (car) {
+            setPrecioReal(car.price - valorActual);
+        }
+    }, [car, valorActual])
+
     return (
-        <>
+        <div className='summary'>
             <FindCustomerApp selectUser={setuser} />
-            <FindCarApp selectCar={setcar} />
+            {openDialog && <FindCarApp setDialog={setopenDialog} selectCar={setcar} currency={monedaActual} />}
             <NavApp logged={true} />
             <form className="container" onSubmit={handleSubmit(submitSchedule)}>
                 {
@@ -100,6 +179,10 @@ export const AddQuotationApp = () => {
                     <h4>GENERAR COTIZACIÓN</h4>
                     <hr />
                     <br />
+                    {
+                        quotationReference &&
+                        <p>Valor guardado: {symbol} {valorActual.toFixed(2)}</p>
+                    }
                     <div className="row" >
                         <div className="col-md-6 shadow-sm bg-white">
                             <div className="form-group">
@@ -108,7 +191,7 @@ export const AddQuotationApp = () => {
                             </div>
                             <div className="form-group mt-2">
                                 <span className='form-label'>Moneda</span>
-                                <select {...register('currency', { required: true })} className='form-control'>
+                                <select {...register('currency', { required: true })} onChange={(e) => cambiarValor(e.target.value)} className='form-control'>
                                     <option value="PEN">Soles</option>
                                     <option value="USD">Dolares</option>
                                 </select>
@@ -143,12 +226,14 @@ export const AddQuotationApp = () => {
                                     <span className='form-label mt-2'>Precio de venta del Vehículo</span>
                                     <input
                                         id='inp_car'
-                                        value={car ? car.price.toLocaleString(undefined, { style: 'currency', currency: 'USD' }) : ''}
+                                        value={car ? car.price : ''}
                                         className="form-control"
                                         readOnly
-                                        onFocus={() => openModal('#find_car')}
+                                        onFocus={() => { setopenDialog(true); }}
                                     />
+                                    {quotationReference && car && <p className='text-success'>Precio real: {precioReal.toFixed(2)}</p>}
                                 </div>
+
                                 <div className="w-100 ml-1">
                                     <span className='form-label'>Tipo de plan de pagos</span>
                                     <select className='form-control' {...register('num_years', { required: true })}>
@@ -220,8 +305,16 @@ export const AddQuotationApp = () => {
                         </div>
                         <div className="col-md-6 mt-2">
                             <div className='shadow-sm bg-white p-2'>
-                                <h6 className='mt-2'>Gastos iniciales</h6>
+                                <h5>Datos de la entidad financiera</h5>
                                 <hr />
+                                <div className="w-100 ml-1">
+                                    <span className='form-label'>Seleccione la entidad financiera</span>
+                                    <select className='form-control mr-1' onChange={(e) => uploadDataFinance(e.target.value)}>
+                                        {
+                                            Entidades.map(e => (<option key={e.id} value={e.id}>{e.name}</option>))
+                                        }
+                                    </select>
+                                </div>
                                 <div className="d-flex">
                                     <div className="w-100 mr-1">
                                         <span className='form-label'>Costos notariales</span>
@@ -266,8 +359,6 @@ export const AddQuotationApp = () => {
                                         }
                                     })} />
                                 </div>
-                                <h6 className='mt-2'>Gastos periodicos</h6>
-                                <hr />
                                 <div className="d-flex">
                                     <div className="w-100 mr-1">
                                         <span className='form-label'>Comisión periodica</span>
@@ -308,7 +399,6 @@ export const AddQuotationApp = () => {
                                         <span className='form-label'>Seguro de riesgo (%)</span>
                                         <div className="d-flex">
                                             <select className='form-control mr-1' {...register('timeRisk')}>
-                                                <option value="mensual">Mensual</option>
                                                 <option value="anual">Anual</option>
                                             </select>
                                             <input type="number" step={0.00001} className='form-control' placeholder='0.0502%' {...register('risk_insurence', {
@@ -343,16 +433,16 @@ export const AddQuotationApp = () => {
                             <div className="d-flex">
                                 <div className='w-100 mr-1'>
                                     <span className='form-label'>Cuota inicial</span>
-                                    <input type="text" className='form-control' readOnly value={cuotaInicial} />
+                                    <input type="text" className='form-control' readOnly value={cuotaInicial.toFixed(2)} />
                                 </div>
                                 <div className='w-100 ml-1'>
                                     <span className='form-label'>Cuota final</span>
-                                    <input type="text" className='form-control' readOnly value={cuotaFinal} />
+                                    <input type="text" className='form-control' readOnly value={cuotaFinal.toFixed(2)} />
                                 </div>
                             </div>
                             <div className='w-100 mt-2'>
                                 <span className='form-label'>Monto del prestamo</span>
-                                <input type="text" className='form-control' readOnly value={prestamo} />
+                                <input type="text" className='form-control' readOnly value={prestamo.toFixed(2)} />
                             </div>
                         </div>
                         <div className="col-md-6">
@@ -391,6 +481,6 @@ export const AddQuotationApp = () => {
             </form>
             <br />
             <br />
-        </>
+        </div>
     )
 }

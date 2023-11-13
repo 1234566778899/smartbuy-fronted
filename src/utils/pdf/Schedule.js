@@ -149,7 +149,11 @@ export const generatePdfSchedule = (payments, quotation) => {
                 `${symbol} ${quotation.initialCost}`
             ],
             [
-                'Monto total financiado:',
+                'Monto del prestamo:',
+                `${symbol} ${quotation.monto.toFixed(2)}`
+            ],
+            [
+                'Saldo a financiar con cuotas:',
                 `${symbol} ${quotation.loanAmount.toFixed(2)}`
             ],
 

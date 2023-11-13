@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { generatePdfSchedule } from '../utils/pdf/Schedule';
 import { setVisible, showToastInfo } from '../utils';
 import axios from 'axios';
@@ -14,22 +14,23 @@ export const ScheduleApp = ({ handleVisible, quotation }) => {
     const [segDes, setSegDes] = useState(0);
     const [segRisk, setSegRisk] = useState(0);
     const [comi, setcomi] = useState(0);
+    const [adm, setAdm] = useState(0);
     const [Portes, setPortes] = useState(0);
     const [tir, settir] = useState(0);
     const [tasaDes, settasaDes] = useState(0);
     const [TCEA, setTCEA] = useState();
     const [van, setvan] = useState();
-
+    const [symbol, setSymbol] = useState('');
     const generateSchedule = () => {
-        let { frecuencyPay, finalDue, daysYear, numDues, fee, insure, loanAmount, risk, portes, cok, gastAdm, comision } =
-            quotation;
+        let { frecuencyPay, finalDue, daysYear, numDues, fee, insure, loanAmount, risk, portes, cok, gastAdm, comision, monto } = quotation;
+        setSymbol(quotation.currency == 'USD' ? '$' : 'S/.');
         let si = loanAmount;
         cok = Math.pow(1 + (cok / 100), frecuencyPay / daysYear) - 1;
         let sum = 0;
         let pays = [];
-        let flows = [-loanAmount];
+        let flows = [-monto];
         settasaDes(cok);
-        let totalCuota = 0, totalAmort = 0, totalDes = 0, totalRisk = 0, totalComis = 0, totalPortes = 0;
+        let totalCuota = 0, totalAmort = 0, totalDes = 0, totalRisk = 0, totalComis = 0, totalPortes = 0, totalAdm = 0;
         for (let index = 0; index < numDues + 1; index++) {
             let tep = Math.pow(1 + fee / 100, frecuencyPay / daysYear) - 1;
             let interes = tep + (insure / 100);
@@ -44,7 +45,8 @@ export const ScheduleApp = ({ handleVisible, quotation }) => {
             totalDes += segDes;
             totalRisk += risk;
             totalComis += comision;
-            totalPortes += (portes + gastAdm);
+            totalPortes += portes;
+            totalAdm += gastAdm;
             let a = cuota - i - segDes;
             if (index == numDues) a = 0;
             totalAmort += a;
@@ -79,15 +81,31 @@ export const ScheduleApp = ({ handleVisible, quotation }) => {
         setSegRisk(totalRisk);
         setcomi(totalComis);
         setPortes(totalPortes);
-        setvan(loanAmount - sum);
+        setAdm(totalAdm);
+        setvan(monto - sum);
         let finance = new Finance();
         const tir_founded = finance.IRR(...flows);
         settir(tir_founded);
         setTCEA(Math.pow(1 + (tir_founded / 100), daysYear / frecuencyPay) - 1);
         setPayments(pays);
     }
+    const cellPg = useRef();
     useEffect(() => {
         generateSchedule();
+        const handleCellClick = () => {
+            if (cellPg.current) {
+                cellPg.current.classList.remove('not-viewed');
+            }
+        };
+        const cell = cellPg.current;
+        if (cell) {
+            cell.addEventListener('click', handleCellClick);
+        }
+        return () => {
+            if (cell) {
+                cell.removeEventListener('click', handleCellClick);
+            }
+        };
     }, [])
     const handleTeaChange = (value, index, key, min = 0, max = 0) => {
         const updatedPayments = [...payments];
@@ -101,7 +119,7 @@ export const ScheduleApp = ({ handleVisible, quotation }) => {
             setPayments(updatedPayments);
             return;
         }
-        let { numDues, insure, finalDue, loanAmount, risk, comision, portes, gastAdm, frecuencyPay, daysYear, cok } = quotation;
+        let { numDues, insure, finalDue, loanAmount, risk, comision, portes, gastAdm, frecuencyPay, daysYear, cok, monto } = quotation;
         cok = Math.pow(1 + (cok / 100), frecuencyPay / daysYear) - 1;
         let sum = 0, totalCuota = 0, totalAmort = 0, totalDes = 0, totalRisk = 0, totalComis = 0, totalPortes = 0;
         let flows = [-loanAmount];
@@ -165,7 +183,7 @@ export const ScheduleApp = ({ handleVisible, quotation }) => {
         setSegRisk(totalRisk);
         setcomi(totalComis);
         setPortes(totalPortes);
-        setvan(loanAmount - sum);
+        setvan(monto - sum);
         let finance = new Finance();
         const tir_founded = finance.IRR(...flows);
         settir(tir_founded);
@@ -187,12 +205,11 @@ export const ScheduleApp = ({ handleVisible, quotation }) => {
         _max.value = ''
     }
     const submitGenerateQuotation = async () => {
-        const newCuotation = { ...quotation, totalInterest: interes, totalAmort: amortizacion, totalSegDes: segDes, totalRisk: segRisk, totalComi: comi, totalPortes: Portes, tir, tasaDes, TCEA, van }
+        const newCuotation = { ...quotation, totalInterest: interes, totalAmort: amortizacion, totalSegDes: segDes, totalRisk: segRisk, totalComi: comi, totalPortes: Portes, totalAdm: adm, tir, tasaDes, TCEA, van }
         axios.post(`${CONFI.uri}/quotation/add`, { ...newCuotation, flows: payments })
-            .then(r => {
+            .then(res => {
                 showToastInfo('Registró exitoso');
-                generatePdfSchedule(payments, newCuotation);
-                navigate('/quotation');
+                navigate(`/quotation/${res.data._id}`);
             })
             .catch(error => {
                 console.log(error);
@@ -200,40 +217,40 @@ export const ScheduleApp = ({ handleVisible, quotation }) => {
             })
     }
     return (
-        <>
+        <div className='summary'>
             <br />
             <div className="d-flex justify-content-between align-items-center">
                 <div className='d-flex justify-content-between align-items-center'>
                     <i className="fa-solid fa-circle-chevron-left icon" onClick={() => handleVisible()}></i>
-                    <h4 className='ml-3'>PREVISUALIZACIÓN</h4>
+                    <h4 className='ml-3'>RESUMEN</h4>
                 </div>
                 <button className='btn btn-primari' onClick={() => submitGenerateQuotation()}>GENERAR PLAN DE PAGOS</button>
             </div>
             <hr />
-            
+
             <div className="row">
                 <div className="col-md-6">
                     <table className='table-cost w-100'>
                         <tbody>
                             <tr>
                                 <td>Intereses</td>
-                                <td>{interes.toFixed(2)}</td>
+                                <td>{symbol} {interes.toFixed(2)}</td>
                             </tr>
                             <tr>
                                 <td>Amortización del capital</td>
-                                <td>{amortizacion.toFixed(2)}</td>
+                                <td>{symbol} {amortizacion.toFixed(2)}</td>
                             </tr>
                             <tr>
                                 <td>Seguro de desgravamen</td>
-                                <td>{segDes.toFixed(2)}</td>
+                                <td>{symbol} {segDes.toFixed(2)}</td>
                             </tr>
                             <tr>
                                 <td>Seguro contra todo riesgo</td>
-                                <td>{segRisk.toFixed(2)}</td>
+                                <td>{symbol} {segRisk.toFixed(2)}</td>
                             </tr>
                             <tr>
                                 <td>Comisiones periodicas</td>
-                                <td>{comi.toFixed(2)}</td>
+                                <td>{symbol} {comi.toFixed(2)}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -243,7 +260,7 @@ export const ScheduleApp = ({ handleVisible, quotation }) => {
                         <tbody>
                             <tr>
                                 <td>Portes / Gastos de adm.</td>
-                                <td>{Portes.toFixed(2)}</td>
+                                <td>{symbol} {Portes.toFixed(2)}</td>
                             </tr>
                             <tr>
                                 <td>Tasa de Descuento (COK)</td>
@@ -274,7 +291,7 @@ export const ScheduleApp = ({ handleVisible, quotation }) => {
                             <th style={{ width: '10px' }}>N°</th>
                             <th style={{ width: '60px' }}>TEA</th>
                             <th style={{ width: '100px' }}>TEM</th>
-                            <th className='head-pg'><span className='head-pg-span' onClick={() => setVisible('#box_pg', true)}>PG</span>
+                            <th ref={cellPg} className='head-pg not-viewed'><span className='head-pg-span' onClick={() => setVisible('#box_pg', true)}>PG</span>
                                 <div className='box-pg' id='box_pg'>
                                     <div className='d-flex'>
                                         <input type="text" id='inp_min' />
@@ -308,7 +325,7 @@ export const ScheduleApp = ({ handleVisible, quotation }) => {
                         <tr>
                             <td>0</td>
                             <td colSpan={13}></td>
-                            <td>{quotation && quotation.loanAmount.toFixed(2)}</td>
+                            <td>{quotation && quotation.monto.toFixed(2)}</td>
                         </tr>
                         {
                             payments.map(pay => (
@@ -341,6 +358,6 @@ export const ScheduleApp = ({ handleVisible, quotation }) => {
                 </table>
             </div>
             <br />
-        </>
+        </div>
     )
 }

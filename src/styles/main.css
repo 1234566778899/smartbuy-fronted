@@ -48,9 +48,6 @@
     overflow-x: scroll;
 }
 
-.table-quotation th {
-    background-color: #EAEAEA;
-}
 
 #find_customer {
     display: none;
@@ -87,7 +84,7 @@
 }
 
 #find_car {
-    display: none;
+    display: flex;
     position: fixed;
     background-color: rgba(0, 0, 0, 0.5);
     top: 0px;
@@ -384,10 +381,6 @@
     padding: 10px 5px;
 }
 
-.table-customer th {
-    background-color: #EAEAEA;
-}
-
 .table-customer td {
     padding: 5px 0px;
 }
@@ -587,4 +580,157 @@ th {
         margin-right: auto;
         display: block;
     }
+}
+
+.summary {
+    font-weight: 400;
+}
+
+.not-viewed {
+    animation: cambio 1.5s infinite linear;
+}
+
+@keyframes cambio {
+
+    0%,
+    100% {
+        filter: brightness(1);
+    }
+
+    50% {
+        filter: brightness(0.9);
+    }
+}
+
+.eye-icon {
+    cursor: pointer;
+    font-size: 20px;
+}
+
+.eye-icon:hover {
+    color: blue;
+}
+
+.trash-icon {
+    cursor: pointer;
+    font-size: 20px;
+}
+
+.pdf-icon {
+    cursor: pointer;
+    font-size: 20px;
+}
+
+
+
+.trash-icon:hover {
+    color: red;
+}
+
+.pdf-icon:hover {
+    color: rgb(129, 2, 248);
+}
+
+.detail-table {
+    background-color: white;
+    width: 100%;
+}
+
+.detail-table td {
+    padding: 15px 10px;
+}
+
+.subtitle {
+    font-size: 1.1rem;
+}
+
+.impar {
+    background-color: #F8F8F8;
+}
+
+.pendiente {
+    background-color: #fffbe6;
+}
+
+.curso {
+    background-color: #d4f2fd;
+}
+
+.renovado {
+    background-color: rgb(108, 174, 207);
+}
+
+.comprado {
+    background-color: rgb(100, 173, 100);
+}
+
+.entregado {
+    background-color: rgb(241, 144, 129);
+}
+
+.finalizado {
+    background-color: rgb(231, 240, 248);
+}
+
+.estado {
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.estado:hover {
+    transform: translateY(-3px);
+}
+
+.leyenda {
+    display: flex;
+    margin-top: 5px;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.leyenda span {
+    margin: 2px;
+    padding: 5px 10px;
+    transition: transform 0.3s ease;
+    background-color: #afafaf;
+}
+
+.leyenda span:hover {
+    transform: translateY(-3px);
+}
+
+.btn-opciones {
+    display: flex;
+    justify-content: center;
+
+}
+
+.btn-opciones button {
+    margin: 3px;
+    border: none;
+    padding: 8px 15px;
+    outline: none;
+}
+
+.btn-opciones button:hover {
+    filter: brightness(0.9);
+}
+
+.ancla {
+    cursor: pointer;
+    color: blue;
+}
+
+.ancla:hover {
+    text-decoration: underline;
+}
+
+.row-quotation:hover {
+    background-color: #e3e3e3;
+}
+
+.tachado {
+    text-decoration: line-through;
+    font-size: 0.8rem;
+    color: rgb(211, 6, 6);
 }
