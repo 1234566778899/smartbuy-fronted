@@ -69,7 +69,7 @@ export const DetailsQuotation = () => {
                 <h4 className='text-center'>Detalles de la cotización</h4>
                 <div className='text-center'>
                     {quotation && quotation.estado == 'pendiente' && <button className='btn btn-primary' onClick={() => submitChangeState('curso')}>Adquirir</button>}
-                    {quotation && quotation.estado == 'curso' && <button id='end_buy' className='btn btn-primary' onClick={() => openModal('#add_customer')}>Finalizar compra</button>}
+                    {quotation && quotation.estado == 'curso' && <button id='end_buy' className='btn btn-primary' onClick={() => openModal('#add_customer')}>Finalizar flujo</button>}
                 </div>
                 <br />
                 <div className="row bg-white">
