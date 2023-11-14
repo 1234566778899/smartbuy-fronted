@@ -688,6 +688,10 @@ th {
     cursor: pointer;
 }
 
+a {
+    cursor: pointer;
+}
+
 .leyenda span {
     margin: 2px;
     padding: 5px 10px;

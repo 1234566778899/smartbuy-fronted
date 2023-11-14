@@ -58,10 +58,10 @@ export const NavApp = ({ logged = false }) => {
                                 !logged && (
                                     <>
                                         <li className="nav-item">
-                                            <a className={`nav-link ${localStorage.getItem('nav') == 'login' ? 'active' : ''}`} href="#" onClick={() => { navigate('/login'); localStorage.setItem('nav', 'login') }}>LOGIN</a>
+                                            <a className={`nav-link ${localStorage.getItem('nav') == 'login' ? 'active' : ''}`} onClick={() => { navigate('/login'); localStorage.setItem('nav', 'login') }}>LOGIN</a>
                                         </li>
                                         <li className="nav-item">
-                                            <a className={`nav-link ${localStorage.getItem('nav') == 'register' ? 'active' : ''}`} href="#" onClick={() => { navigate('/register'); localStorage.setItem('nav', 'register') }}>SIGN UP</a>
+                                            <a className={`nav-link ${localStorage.getItem('nav') == 'register' ? 'active' : ''}`} onClick={() => { navigate('/register'); localStorage.setItem('nav', 'register') }}>SIGN UP</a>
                                         </li>
                                     </>
                                 )
@@ -70,16 +70,16 @@ export const NavApp = ({ logged = false }) => {
                                 logged && (
                                     <>
                                         <li className="nav-item">
-                                            <a className={`nav-link ${localStorage.getItem('nav') == 'client' ? 'active' : ''}`} href="#" onClick={() => { navigate('/customer'); localStorage.setItem('nav', 'client') }}>Clientes</a>
+                                            <a className={`nav-link ${localStorage.getItem('nav') == 'client' ? 'active' : ''}`} onClick={() => { navigate('/customer'); localStorage.setItem('nav', 'client') }}>Clientes</a>
                                         </li>
                                         <li className="nav-item">
-                                            <a className={`nav-link ${localStorage.getItem('nav') == 'quotation' ? 'active' : ''}`} href="#" onClick={() => { navigate('/quotation'); localStorage.setItem('nav', 'quotation') }}>Historial</a>
+                                            <a className={`nav-link ${localStorage.getItem('nav') == 'quotation' ? 'active' : ''}`} onClick={() => { navigate('/quotation'); localStorage.setItem('nav', 'quotation') }}>Historial</a>
                                         </li>
                                         <li className="nav-item">
-                                            <a className={`nav-link ${localStorage.getItem('nav') == 'add' ? 'active' : ''}`} href="#" onClick={() => { navigate('/add/quotation'); localStorage.setItem('nav', 'add') }}>Agregar cotizacion</a>
+                                            <a className={`nav-link ${localStorage.getItem('nav') == 'add' ? 'active' : ''}`} onClick={() => { navigate('/add/quotation'); localStorage.setItem('nav', 'add') }}>Agregar cotizacion</a>
                                         </li>
                                         <li className="nav-item">
-                                            <a className={`nav-link ${localStorage.getItem('nav') == 'dashboard' ? 'active' : ''}`} href="#" onClick={() => { navigate('/dashboard'); localStorage.setItem('nav', 'dashboard') }}>Dashboard</a>
+                                            <a className={`nav-link ${localStorage.getItem('nav') == 'dashboard' ? 'active' : ''}`} onClick={() => { navigate('/dashboard'); localStorage.setItem('nav', 'dashboard') }}>Dashboard</a>
                                         </li>
                                         <li>
                                             <div className="avatar" id='box_avatar' onClick={() => openModal2('#box_out')}>

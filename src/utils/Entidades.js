@@ -30,22 +30,7 @@ export const Entidades = [
         periodica: 0
     },
     {
-        id: 2,
-        name: 'Scotiabank',
-        notariales: 150,
-        registrales: 250,
-        tasacion: 80,
-        comisionEstudio: 50,
-        comisionActivacion: 0,
-        comisionPeriodica: 0,
-        portes: 3.5,
-        gastosAdm: 0,
-        seguroDesgravamen: 0.05,
-        seguroRiesgo: 0.3,
-        periodica: 0
-    },
-    {
-        id: 4,
+        id: 3,
         name: 'CreditMax',
         notariales: 120,
         registrales: 50,
@@ -60,7 +45,7 @@ export const Entidades = [
         periodica: 0
     },
     {
-        id: 5,
+        id: 4,
         name: 'BancaRápida',
         notariales: 200,
         registrales: 100,
@@ -75,7 +60,7 @@ export const Entidades = [
         periodica: 0
     },
     {
-        id: 6,
+        id: 5,
         name: 'InversionesSeguras',
         notariales: 90,
         registrales: 70,
