@@ -16,7 +16,9 @@ export const DetailsQuotation = () => {
     const submitChangeState = (estado) => {
         axios.put(`${CONFI.uri}/quotation/state/${id}`, { estado })
             .then(res => {
-                showToastInfo('Estado actualizado');
+                if (estado == 'entregado') showToastInfo('El vehículo ha sido devuelto');
+                if (estado == 'comprado') showToastInfo('El vehículo ha sido comprado');
+                if (estado == 'curso') showToastInfo('El flujo esta en curso');
                 getQuotations();
             })
             .catch(error => {
