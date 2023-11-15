@@ -15,7 +15,7 @@ export const FindCarApp = ({ selectCar, currency, setDialog }) => {
 
     const filterCar = (param) => {
         param = param.toLowerCase();
-        setCarFiltered(CARS.filter(car => car.name.toLowerCase().includes(param) || car.description.toLowerCase().includes(param)));
+        setCarFiltered(CARS.filter(car => car.brand.toLowerCase().includes(param) || car.model.toLowerCase().includes(param) || car.yearManufactured.toString().includes(param) || car.color.toLowerCase().includes(param) || car.otherDetails.toLowerCase().includes(param) || car.color.toLowerCase().includes(param) || car.price.toString().toLowerCase().includes(param)));
     }
 
     return (
