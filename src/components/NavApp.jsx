@@ -86,9 +86,6 @@ export const NavApp = ({ logged = false }) => {
                                                 <span>{user && user.username[0]}</span>
                                             </div>
                                             <div className="box-out" id='box_out'>
-                                                <div className="item">
-                                                    <span>{user && user.username}</span>
-                                                </div>
                                                 <div className='item' onClick={() => { navigate('/login'); localStorage.setItem('id', ''); localStorage.setItem('nav', 'login') }}>
                                                     <i className="fa-solid fa-right-from-bracket"></i>
                                                     <span className='ml-2'>Salir</span>

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { NavApp } from './NavApp'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios';
-import { showToastInfo } from '../utils';
+import { onlyEnteros, showToastInfo, soloLetras } from '../utils';
 import { generatePdfSchedule } from '../utils/pdf/Schedule';
 import { useForm } from 'react-hook-form';
 import moment from 'moment/moment';
@@ -60,9 +60,9 @@ export const QuotationApp = () => {
                 <form onSubmit={handleSubmit(searchQuotation)} className='d-flex form-search-quotation py-1'>
                     <input type="date" className='form-control ml-1 bg-white' placeholder='Inicio' {...register('inicio')} />
                     <input type="date" className='form-control ml-1 bg-white' placeholder='Fin' {...register('fin')} />
-                    <input type="text" className='form-control ml-1 bg-white' placeholder='DNI'{...register('documentNumber')} />
-                    <input type="text" className='form-control ml-1 bg-white' placeholder='Nombre'{...register('name')} />
-                    <input type="text" className='form-control ml-1 bg-white' placeholder='Apellido'{...register('lname')} />
+                    <input onInput={(e) => onlyEnteros(e.target)} type="text" className='form-control ml-1 bg-white' placeholder='DNI'{...register('documentNumber')} />
+                    <input onInput={(e) => soloLetras(e)} type="text" className='form-control ml-1 bg-white' placeholder='Nombre'{...register('name')} />
+                    <input onInput={(e) => soloLetras(e)} type="text" className='form-control ml-1 bg-white' placeholder='Apellido'{...register('lname')} />
                     <button className='btn btn-success' type='submit'>Buscar</button>
                 </form>
                 <div className='leyenda mb-2'>
@@ -94,7 +94,7 @@ export const QuotationApp = () => {
                                 quotations.map((quo, i) => (
                                     <tr key={quo._id} className={`row-quotation`}>
                                         <td>{i + 1}</td>
-                                        <td >{quo.estado.toUpperCase()}</td>
+                                        <td >{quo.estado == 'curso' ? 'EN CURSO' : quo.estado.toUpperCase()}</td>
                                         <td>{moment(quo.createdAt).format('DD/MM/YYYY')}</td>
                                         <td>{quo.customer.documentNumber}</td>
                                         <td>{quo.customer.name} {quo.customer.lname}</td>

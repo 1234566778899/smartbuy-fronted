@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { NavApp } from './NavApp';
 import { CONFI } from '../utils/config';
 import axios from 'axios';
-import { closeModal, openModal, showToastInfo } from '../utils';
+import { closeModal, openModal, showToastInfo, soloNumerosDecimales } from '../utils';
 import { useForm } from 'react-hook-form';
 
 export const DetailsQuotation = () => {
@@ -305,6 +305,59 @@ export const DetailsQuotation = () => {
                     </div>
                 </div>
                 <br />
+                <div className="table-schedule">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style={{ width: '10px' }}>N°</th>
+                                <th style={{ width: '60px' }}>TEA</th>
+                                <th style={{ width: '100px' }}>TEM</th>
+                                <th >PG</th>
+                                <th>Saldo Inicial</th>
+                                <th>Interés</th>
+                                <th>Cuota</th>
+                                <th>Amort.</th>
+                                <th>Seguro  desgrav</th>
+                                <th>Seguro de riesgo</th>
+                                <th>Comisión</th>
+                                <th>Portes</th>
+                                <th>Gastos Adm.</th>
+                                <th>Saldo Final.</th>
+                                <th>Flujo.</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>0</td>
+                                <td colSpan={13}></td>
+                                <td>{quotation && quotation.monto.toFixed(2)}</td>
+                            </tr>
+                            {
+                                quotation && quotation.flows.map(pay => (
+                                    <tr key={pay.n}>
+                                        <td>{pay.n}</td>
+                                        <td>{pay.tea}%</td>
+                                        <td>{pay.tep.toFixed(5)} %</td>
+                                        <td>{pay.pg}</td>
+                                        <td>{pay.si.toFixed(2)}</td>
+                                        <td>{pay.i.toFixed(2)}</td>
+                                        <td>{pay.cuota.toFixed(2)}</td>
+                                        <td>{pay.a.toFixed(2)}</td>
+                                        <td>{pay.segDes.toFixed(2)}</td>
+                                        <td>{pay.segRis.toFixed(2)}</td>
+                                        <td>{pay.comision}</td>
+                                        <td>{pay.portes}</td>
+                                        <td>{pay.gastAdm.toFixed(2)}</td>
+                                        <td>{pay.sf.toFixed(2)}</td>
+                                        <td>{pay.flujo.toFixed(2)}</td>
+                                    </tr>
+                                ))
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <br />
+                <br />
             </div>
             <div id='add_customer'>
                 <div className='box' id='end_quotation'>
@@ -329,7 +382,7 @@ export const DetailsQuotation = () => {
                         porRenovar && <div className="px-5">
                             <p className='text-center'>Ingrese la tasación o precio actual del vehículo</p>
                             <form onSubmit={handleSubmit(addNewQuotation)}>
-                                <input {...register('tasacion', { required: true })} type="text" className='form-control text-center' placeholder={symbol} />
+                                <input onInput={(e) => soloNumerosDecimales(e)} {...register('tasacion', { required: true })} type="text" className='form-control text-center' placeholder={symbol} />
                                 {errors.tasacion && <p className='text-danger'>Debe ingresar la tasación</p>}
                                 <div className='d-flex justify-content-center mt-2'>
                                     <button type='submit' className='btn btn-primary ml-2'>Aceptar</button>
@@ -340,7 +393,9 @@ export const DetailsQuotation = () => {
                     }
                     <p className='text-center'>¿Necesitas más información? <span className='ancla' onClick={() => navigate('/info')}>Click aqui</span> </p>
                 </div>
+
             </div>
+
         </div>
     )
 }

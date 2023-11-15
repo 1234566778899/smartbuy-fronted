@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { NavApp } from './NavApp'
 import { FindCustomerApp } from './FindCustomerApp'
-import { openModal, setVisible, showToastInfo } from '../utils'
+import { openModal, setVisible, showToastInfo, soloNumerosDecimales } from '../utils'
 import { FindCarApp } from './FindCarApp'
 import { useForm } from 'react-hook-form'
 import { ScheduleApp } from './ScheduleApp'
@@ -208,11 +208,7 @@ export const AddQuotationApp = () => {
                                         <select className='form-control' {...register('cok_type', { required: true })}>
                                             <option value="efectiva">TEA</option>
                                         </select>
-                                        <input type="number" step={0.00001} className='form-control ml-1' placeholder='25.5%' {...register('cok', {
-                                            required: true, validate: {
-                                                positive: value => parseFloat(value) > 0 || 'Debe ser un número positivo',
-                                            }
-                                        })} />
+                                        <input onInput={(e) => soloNumerosDecimales(e)} type="number" className='form-control ml-1' placeholder='25.5%' {...register('cok')} />
                                     </div>
                                 </div>
                             </div>
@@ -265,11 +261,7 @@ export const AddQuotationApp = () => {
                                 </div>
                                 <div className='w-100 ml-1'>
                                     <span>Tasa de Interés</span>
-                                    <input type="number" step={0.00001} className='form-control ml-1' placeholder='10.5%' {...register('fee', {
-                                        required: true, validate: {
-                                            positive: value => parseFloat(value) > 0 || 'Debe ser un número positivo',
-                                        }
-                                    })} />
+                                    <input onInput={(e) => soloNumerosDecimales(e)} type="text" className='form-control ml-1' placeholder='10.5%' {...register('fee')} />
                                 </div>
                             </div>
                             <div className="d-flex mt-2">
@@ -318,82 +310,46 @@ export const AddQuotationApp = () => {
                                 <div className="d-flex">
                                     <div className="w-100 mr-1">
                                         <span className='form-label'>Costos notariales</span>
-                                        <input type="number" step={0.00001} className="form-control" {...register('notarial_cost', {
-                                            validate: {
-                                                positive: value => parseFloat(value) >= 0 || 'Debe ser un número positivo',
-                                            }
-                                        })} />
+                                        <input onInput={(e) => soloNumerosDecimales(e)} type="number" className="form-control" {...register('notarial_cost')} />
                                     </div>
                                     <div className="w-100 ml-1">
                                         <span className='form-label'>Costos registrales</span>
-                                        <input type="number" step={0.00001} className="form-control" {...register('registration_cost', {
-                                            validate: {
-                                                positive: value => parseFloat(value) >= 0 || 'Debe ser un número positivo',
-                                            }
-                                        })} />
+                                        <input onInput={(e) => soloNumerosDecimales(e)} type="text" className="form-control" {...register('registration_cost')} />
                                     </div>
                                 </div>
                                 <div className="d-flex">
                                     <div className="w-100 mr-1">
                                         <span className='form-label'>Tasación</span>
-                                        <input type="number" step={0.00001} className="form-control" {...register('appraisal', {
-                                            validate: {
-                                                positive: value => parseFloat(value) >= 0 || 'Debe ser un número positivo',
-                                            }
-                                        })} />
+                                        <input onInput={(e) => soloNumerosDecimales(e)} type="text" className="form-control" {...register('appraisal')} />
                                     </div>
                                     <div className="w-100 ml-1">
                                         <span className='form-label'>Comisión de estudio</span>
-                                        <input type="number" step={0.00001} className="form-control" {...register('study_fee', {
-                                            validate: {
-                                                positive: value => parseFloat(value) >= 0 || 'Debe ser un número positivo',
-                                            }
-                                        })} />
+                                        <input onInput={(e) => soloNumerosDecimales(e)} type="text" className="form-control" {...register('study_fee')} />
                                     </div>
                                 </div>
                                 <div className="form-group mt-2">
                                     <span className='form-label'>Comisión de activación</span>
-                                    <input type="number" step={0.00001} className="form-control" {...register('activation_fee', {
-                                        validate: {
-                                            positive: value => parseFloat(value) >= 0 || 'Debe ser un número positivo',
-                                        }
-                                    })} />
+                                    <input onInput={(e) => soloNumerosDecimales(e)} type="text" className="form-control" {...register('activation_fee')} />
                                 </div>
                                 <div className="d-flex">
                                     <div className="w-100 mr-1">
                                         <span className='form-label'>Comisión periodica</span>
-                                        <input type="number" step={0.00001} className='form-control' placeholder='0.0502%' {...register('periodic_commission', {
-                                            validate: {
-                                                positive: value => parseFloat(value) >= 0 || 'Debe ser un número positivo',
-                                            }
-                                        })} />
+                                        <input onInput={(e) => soloNumerosDecimales(e)} type="text" className='form-control' placeholder='0.0502%' {...register('periodic_commission')} />
                                     </div>
                                     <div className="w-100 ml-1 mr-1">
                                         <span className='form-label'>Portes</span>
-                                        <input type="number" step={0.00001} className='form-control' placeholder='0.0502%' {...register('shipping', {
-                                            validate: {
-                                                positive: value => parseFloat(value) >= 0 || 'Debe ser un número positivo',
-                                            }
-                                        })} />
+                                        <input onInput={(e) => soloNumerosDecimales(e)} type="text" className='form-control' placeholder='0.0502%' {...register('shipping')} />
                                     </div>
                                     <div className="w-100 ml-1">
                                         <span className='form-label'>Gastos de administración</span>
-                                        <input type="number" step={0.00001} className='form-control' placeholder='0..' {...register('administration_expenses', {
-                                            validate: {
-                                                positive: value => parseFloat(value) >= 0 || 'Debe ser un número positivo',
-                                            }
-                                        })} />
+                                        <input onInput={(e) => soloNumerosDecimales(e)} type="text" className='form-control' placeholder='0..' {...register('administration_expenses')} />
                                     </div>
                                 </div>
                                 <div className="d-flex">
 
                                     <div className="w-100 mr-1">
                                         <span className='form-label'>Seguro de desgravamen (%)</span>
-                                        <input type="number" step={0.00001} className='form-control ml-1' placeholder='0.0502%' {...register('credit_life_insurence', {
-                                            validate: {
-                                                positive: value => parseFloat(value) >= 0 || 'Debe ser un número positivo',
-                                            }
-                                        })} />
+                                        <input onInput={(e) => soloNumerosDecimales(e)} type="text" className='form-control ml-1' placeholder='0.0502%' {...register('credit_life_insurence')} />
                                     </div>
                                     <div className="w-100 ml-1">
                                         <span className='form-label'>Seguro de riesgo (%)</span>
@@ -401,11 +357,7 @@ export const AddQuotationApp = () => {
                                             <select className='form-control mr-1' {...register('timeRisk')}>
                                                 <option value="anual">Anual</option>
                                             </select>
-                                            <input type="number" step={0.00001} className='form-control' placeholder='0.0502%' {...register('risk_insurence', {
-                                                validate: {
-                                                    positive: value => parseFloat(value) >= 0 || 'Debe ser un número positivo',
-                                                }
-                                            })} />
+                                            <input onInput={(e) => soloNumerosDecimales(e)} type="text" className='form-control' placeholder='0.0502%' {...register('risk_insurence')} />
                                         </div>
                                     </div>
                                 </div>

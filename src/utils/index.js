@@ -33,4 +33,17 @@ export const openAcordeon = (documentId) => {
     const doc = document.querySelector(documentId);
     doc.classList.toggle('acordeon-open');
 }
-
+export const onlyEnteros = (input) => {
+    input.value = input.value.replace(/\D/g, '');
+}
+export const soloLetras = (event) => {
+    var regExp = /[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g;
+    event.target.value = event.target.value.replace(regExp, '');
+}
+export const soloNumerosDecimales = (event) => {
+    var regExp = /[^0-9.]/g;
+    event.target.value = event.target.value.replace(regExp, '');
+    if ((event.target.value.match(/\./g) || []).length > 1) {
+        event.target.value = event.target.value.replace(/\.+$/, "");
+    }
+}

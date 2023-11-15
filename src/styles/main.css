@@ -688,8 +688,8 @@ th {
     cursor: pointer;
 }
 
-a {
-    cursor: pointer;
+.esperando {
+    filter: brightness(0.9);
 }
 
 .leyenda span {
@@ -708,7 +708,9 @@ a {
     justify-content: center;
 
 }
-
+a{
+    cursor: pointer;
+}
 .btn-opciones button {
     margin: 3px;
     border: none;

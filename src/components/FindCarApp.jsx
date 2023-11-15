@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react'
-import { closeModal, showToastInfo } from '../utils'
+import { closeModal, onlyEnteros, showToastInfo, soloNumerosDecimales } from '../utils'
 import { CARS } from '../utils/Cars'
 import { useState } from 'react'
 
@@ -48,6 +48,7 @@ export const FindCarApp = ({ selectCar, currency, setDialog }) => {
                     <div className="d-flex align-items-center w-50">
                         <span className='icon-currency'>$</span>
                         <input
+                            onInput={(e) => soloNumerosDecimales(e)}
                             ref={price}
                             type="text"
                             className='form-control bg-white inp-price mt-2'
@@ -57,6 +58,7 @@ export const FindCarApp = ({ selectCar, currency, setDialog }) => {
                         />
                         <button className='btn btn-primary ml-2 mt-1' onClick={() => {
                             if (price.current.value.trim() == '') return showToastInfo('Debe seleccionar un vehículo');
+                            if (Number(price.current.value) <= 0) return showToastInfo('Debe ingresar un valor mayor a cero');
                             selectCar(carSelected);
                             setDialog(false);
                         }}>Aceptar</button>

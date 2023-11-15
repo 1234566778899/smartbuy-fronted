@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { NavApp } from './NavApp'
 import { useForm } from 'react-hook-form'
 import axios from 'axios';
-import { closeModal, openModal, setVisible, showToastInfo } from '../utils';
+import { closeModal, onlyEnteros, openModal, setVisible, showToastInfo, soloLetras } from '../utils';
 import { EditCustomerApp } from './EditCustomerApp';
 import { CONFI } from '../utils/config';
 
@@ -15,7 +15,7 @@ export const CustomerApp = () => {
         axios.post(`${CONFI.uri}/user/add`, { ...data, monthly_income: parseFloat(data.monthly_income) })
             .then(r => {
                 closeModal('#add_customer');
-                showToastInfo('El usuario se registró correctamente');
+                showToastInfo('El cliente se registró correctamente');
                 getCustomers();
             })
             .catch(error => showToastInfo(error.response.data.error));
@@ -32,12 +32,13 @@ export const CustomerApp = () => {
     const deleteCustomer = (customerId) => {
         axios.get(`${CONFI.uri}/user/delete/${customerId}`)
             .then(res => {
-                showToastInfo('Usuario eliminado correctamente');
+                showToastInfo('Cliente eliminado correctamente');
                 getCustomers();
                 reset();
             })
             .catch(error => console.log(error));
     }
+    
     const searchCustomers = (param) => {
         param = param.toLowerCase();
         setUsersFiltered(users.filter(u => u.name.toLowerCase().includes(param) || u.documentNumber.toLowerCase().includes(param) || u.lname.toLowerCase().includes(param)));
@@ -124,31 +125,38 @@ export const CustomerApp = () => {
                             </div>
                             <div className='w-100 ml-1'>
                                 <label className='form-label'>Número de documento</label>
-                                <input {...register('documentNumber', { required: true })} type="text" className='form-control' placeholder='4556756..' />
+                                <input onInput={(e) => onlyEnteros(e.target)} {...register('documentNumber', { required: true, maxLength: 8, minLength: 8 })} type="text" className='form-control' placeholder='4556756..' />
                             </div>
                         </div>
+                        {errors.documentNumber?.type == 'required' && <span className='text-danger'>El dni es obligatorio</span>}
+                        {(errors.documentNumber?.type == 'maxLength' || errors.documentNumber?.type == 'minLength') && <span className='text-danger'>El dni debe tener 8 dígitos</span>}
                         <div className='form-group'>
                             <label className='form-label'>Nombre</label>
-                            <input {...register('name', { required: true })} type="text" className='form-control' placeholder='Escribe un nombre..' />
+                            <input onInput={(e) => soloLetras(e)} {...register('name', { required: true })} type="text" className='form-control' placeholder='Escribe un nombre..' />
                         </div>
+                        {errors.name && <span className='text-danger'>El nombre es obligatorio</span>}
                         <div className='form-group'>
-                            <label className='form-label'>Apellido</label>
-                            <input {...register('lname', { required: true })} type="text" className='form-control' placeholder='Escribe un apellido..' />
+                            <label className='form-label' >Apellido</label>
+                            <input onInput={(e) => soloLetras(e)}{...register('lname', { required: true })} type="text" className='form-control' placeholder='Escribe un apellido..' />
                         </div>
+                        {errors.lname && <span className='text-danger'>El apellido es obligatorio</span>}
                         <div className='form-group'>
                             <label className='form-label'>Dirección</label>
                             <input {...register('address', { required: true })} type="text" className='form-control' placeholder='Av. ..' />
                         </div>
+                        {errors.lname && <span className='text-danger'>El dni es obligatorio</span>}
                         <div className="d-flex">
                             <div className='w-100 mr-1'>
                                 <label className='form-label'>Teléfono</label>
-                                <input {...register('telephone', { required: true, })} type="text" className='form-control' placeholder='93..' />
+                                <input {...register('telephone', { required: true, })} type="text" className='form-control' placeholder='93..' onInput={(e) => onlyEnteros(e.target)} />
                             </div>
                             <div className='w-100 ml-1'>
-                                <label className='form-label'>Email</label>
-                                <input {...register('email', { required: true, })} type="email" className='form-control' placeholder='...@gmail.com' />
+                                <label className='form-label' >Email</label>
+                                <input {...register('email', { required: true, email: true })} type="email" className='form-control' placeholder='...@gmail.com' />
                             </div>
                         </div>
+                        {errors.telephone && <span className='text-danger d-block'>El telefono es obligatorio</span>}
+                        {errors.email && <span className='text-danger'>El email es obligatorio</span>}
                         <button className='btn btn-success mt-2 w-100' type='submit'>Guardar</button>
                     </form>
                 </div>
