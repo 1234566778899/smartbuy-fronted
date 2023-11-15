@@ -83,7 +83,8 @@ export const QuotationApp = () => {
                                 <th>Cliente</th>
                                 <th>VAN</th>
                                 <th>TIR</th>
-                                <th>CRÉDITO</th>
+                                <th>COK</th>
+                                <th>PRESTAMO</th>
                                 <th>INTERÉS</th>
                                 <th>Plazo</th>
                                 <th>Acciones</th>
@@ -95,12 +96,13 @@ export const QuotationApp = () => {
                                     <tr key={quo._id} className={`row-quotation`}>
                                         <td>{i + 1}</td>
                                         <td >{quo.estado == 'curso' ? 'EN CURSO' : quo.estado.toUpperCase()}</td>
-                                        <td>{moment(quo.createdAt).format('DD/MM/YYYY')}</td>
+                                        <td>{moment(quo.createdAt).format('DD/MM/YYYY hh:mm:ss')}</td>
                                         <td>{quo.customer.documentNumber}</td>
                                         <td>{quo.customer.name} {quo.customer.lname}</td>
                                         <td>{quo.van.toFixed(2)}</td>
-                                        <td>{quo.tir.toFixed(2)}</td>
-                                        <td>{quo.loanAmount.toFixed(2)}</td>
+                                        <td>{quo.tir.toFixed(2)}%</td>
+                                        <td>{(quo.tasaDes * 100).toFixed(2)}%</td>
+                                        <td>{quo.currency == 'USD' ? '$' : 'S/.'} {quo.monto.toFixed(2)}</td>
                                         <td>{quo.fee.toFixed(2)} %</td>
                                         <td>{quo.numDues}</td>
                                         <td>
