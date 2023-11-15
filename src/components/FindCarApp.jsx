@@ -4,7 +4,6 @@ import { CARS } from '../utils/Cars'
 import { useState } from 'react'
 
 export const FindCarApp = ({ selectCar, currency, setDialog }) => {
-    console.log(currency);
     const [carFiltered, setCarFiltered] = useState([]);
     const [carSelected, setCarSelected] = useState({});
     const price = useRef();

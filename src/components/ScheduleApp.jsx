@@ -84,7 +84,6 @@ export const ScheduleApp = ({ handleVisible, quotation }) => {
         setAdm(totalAdm);
         setvan(monto - sum);
         let finance = new Finance();
-        console.log(flows);
         const tir_founded = finance.IRR(...flows);
         settir(tir_founded);
         setTCEA(Math.pow(1 + (tir_founded / 100), daysYear / frecuencyPay) - 1);

@@ -30,7 +30,6 @@ export const DetailsQuotation = () => {
     const getQuotations = () => {
         axios.get(`${CONFI.uri}/quotation/${id}`)
             .then(res => {
-                console.log(res.data)
                 setQuotation(res.data);
                 setSymbol(res.data.currency == 'USD' ? '$' : 'S/.');
             })
@@ -44,8 +43,6 @@ export const DetailsQuotation = () => {
     }, [])
     /* eslint-disable no-restricted-globals */
     const addNewQuotation = (data) => {
-        console.log(1);
-        console.log(data.tasaDes);
         if (data.tasacion < quotation.finalDue) {
             if (confirm('¿La tasación es menor al valor de la deuda, esta seguro que desea continuar?')) {
                 submitReferenceQuotation(data);
