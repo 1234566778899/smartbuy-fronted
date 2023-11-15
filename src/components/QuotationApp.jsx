@@ -109,7 +109,9 @@ export const QuotationApp = () => {
                                             {
                                                 quo.estado != 'pendiente' && <span className='pdf-icon ml-3' onClick={() => lookPdf(quo)}><i className="fa-solid fa-file-pdf"></i></span>
                                             }
-                                            <span className='trash-icon ml-3' onClick={() => deleteQuotations(quo._id)}><i className="fa-solid fa-trash"></i></span>
+                                            {
+                                                quo.estado == 'pendiente' && <span className='trash-icon ml-3' onClick={() => deleteQuotations(quo._id)}><i className="fa-solid fa-trash"></i></span>
+                                            }
                                         </td>
                                     </tr>
                                 ))
