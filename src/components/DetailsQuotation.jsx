@@ -239,7 +239,7 @@ export const DetailsQuotation = () => {
                                 </tr>
                                 <tr>
                                     <td className='key'>Seguro riesgo</td>
-                                    <td className='value'>{symbol} {quotation && quotation.risk}</td>
+                                    <td className='value'>{symbol} {quotation && quotation.risk.toFixed(2)}</td>
                                 </tr>
                             </tbody>
                         </table>
