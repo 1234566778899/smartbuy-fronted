@@ -64,7 +64,7 @@ export const generatePdfSchedule = (payments, quotation) => {
         const cadTotal = t.length ? `Total ${t.map(formatPeriod).join(',')}` : '';
         if (!cadParcial && !cadTotal) return 'No aplica';
         return `${cadParcial} ${cadTotal}`.trim();
-        
+
     }
 
     const info = {
@@ -250,7 +250,7 @@ export const generatePdfSchedule = (payments, quotation) => {
             ],
             ...payments.map(pay => (
                 [
-                    pay.n, pay.pg, pay.si.toFixed(2), pay.i.toFixed(2), pay.cuota.toFixed(2), pay.a.toFixed(2), pay.segDes.toFixed(2), pay.segRis.toFixed(2), pay.comision, pay.portes.toFixed(2), pay.gastAdm.toFixed(2), pay.sf.toFixed(2), pay.flujo.toFixed(2)
+                    pay.n, pay.pg == 'S' ? '-' : (pay.pg == 'T' ? 'Total' : 'Parcial'), pay.si.toFixed(2), pay.i.toFixed(2), pay.cuota.toFixed(2), pay.a.toFixed(2), pay.segDes.toFixed(2), pay.segRis.toFixed(2), pay.comision, pay.portes.toFixed(2), pay.gastAdm.toFixed(2), pay.sf.toFixed(2), pay.flujo.toFixed(2)
                 ]
             ))
         ],

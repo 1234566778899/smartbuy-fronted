@@ -338,7 +338,7 @@ export const DetailsQuotation = () => {
                                         <td>{pay.n}</td>
                                         <td>{pay.tea}%</td>
                                         <td>{pay.tep.toFixed(5)} %</td>
-                                        <td>{pay.pg}</td>
+                                        <td>{pay.pg == 'S' ? '-' : (pay.pg == 'T' ? 'Total' : 'Parcial')}</td>
                                         <td>{pay.si.toFixed(2)}</td>
                                         <td>{pay.i.toFixed(2)}</td>
                                         <td>{pay.cuota.toFixed(2)}</td>
