@@ -30,6 +30,7 @@ export const DetailsQuotation = () => {
     const getQuotations = () => {
         axios.get(`${CONFI.uri}/quotation/${id}`)
             .then(res => {
+                console.log(res.data)
                 setQuotation(res.data);
                 setSymbol(res.data.currency == 'USD' ? '$' : 'S/.');
             })
@@ -183,7 +184,7 @@ export const DetailsQuotation = () => {
                         <table className='detail-table'>
                             <tbody>
                                 <tr className='impar'>
-                                    <td className='key'>Tasa de descuento</td>
+                                    <td className='key'>Tasa de descuento (COK)</td>
                                     <td className='value'>{quotation && quotation.cok} %</td>
                                 </tr>
                             </tbody>
@@ -286,7 +287,7 @@ export const DetailsQuotation = () => {
                         <table className='detail-table'>
                             <tbody>
                                 <tr className='impar'>
-                                    <td className='key'>Tasa de descuento</td>
+                                    <td className='key'>Tasa de descuento (COKi)</td>
                                     <td className='value'>{quotation && (quotation.tasaDes * 100).toFixed(5)} %</td>
                                 </tr>
                                 <tr >
@@ -338,7 +339,7 @@ export const DetailsQuotation = () => {
                                 quotation && quotation.flows.map(pay => (
                                     <tr key={pay.n}>
                                         <td>{pay.n}</td>
-                                        <td>{pay.tea}%</td>
+                                        <td>{pay.tea.toFixed(2)}%</td>
                                         <td>{pay.tep.toFixed(5)} %</td>
                                         <td>{pay.pg == 'S' ? '-' : (pay.pg == 'T' ? 'Total' : 'Parcial')}</td>
                                         <td>{pay.si.toFixed(2)}</td>

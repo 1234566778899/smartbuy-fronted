@@ -84,6 +84,7 @@ export const ScheduleApp = ({ handleVisible, quotation }) => {
         setAdm(totalAdm);
         setvan(monto - sum);
         let finance = new Finance();
+        console.log(flows);
         const tir_founded = finance.IRR(...flows);
         settir(tir_founded);
         setTCEA(Math.pow(1 + (tir_founded / 100), daysYear / frecuencyPay) - 1);
@@ -122,7 +123,7 @@ export const ScheduleApp = ({ handleVisible, quotation }) => {
         let { numDues, insure, finalDue, loanAmount, risk, comision, portes, gastAdm, frecuencyPay, daysYear, cok, monto } = quotation;
         cok = Math.pow(1 + (cok / 100), frecuencyPay / daysYear) - 1;
         let sum = 0, totalCuota = 0, totalAmort = 0, totalDes = 0, totalRisk = 0, totalComis = 0, totalPortes = 0;
-        let flows = [-loanAmount];
+        let flows = [-monto];
         let si = loanAmount;
         for (let index = 0; index < updatedPayments.length; index++) {
             let pay = updatedPayments[index];
@@ -263,7 +264,7 @@ export const ScheduleApp = ({ handleVisible, quotation }) => {
                                 <td>{symbol} {Portes.toFixed(2)}</td>
                             </tr>
                             <tr>
-                                <td>Tasa de Descuento (COK)</td>
+                                <td>Tasa de Descuento (COKi)</td>
                                 <td>{(tasaDes * 100).toFixed(5)}%</td>
                             </tr>
                             <tr>
