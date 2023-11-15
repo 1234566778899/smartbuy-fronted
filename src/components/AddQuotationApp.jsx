@@ -257,12 +257,15 @@ export const AddQuotationApp = () => {
                                     <span className='form-label mt-2'>Número de años</span>
                                     <input className="form-control" readOnly value={allForm.num_years} />
                                 </div>
-                                <div className='w-100 ml-1'>
-                                    <span>Tasa de Interés</span>
-                                    <input onInput={(e) => soloNumerosDecimales(e)} type="text" className='form-control ml-1' placeholder='10.5%' {...register('fee', { required: true })} />
+                                <div className='w-100'>
+                                    <div className='w-100 ml-1'>
+                                        <span>Tasa de Interés</span>
+                                        <input onInput={(e) => soloNumerosDecimales(e)} type="text" className='form-control ml-1' placeholder='10.5%' {...register('fee', { required: true })} />
+                                    </div>
+                                    {errors.fee && <span className='text-danger'>La tasa de interes es obligatorio</span>}
                                 </div>
                             </div>
-                            {errors.fee && <span className='text-danger'>La tasa de interes es obligatorio</span>}
+
                             <div className="d-flex mt-2">
                                 <div className="w-100">
                                     <span className='form-label'>Tipo de tasa de interés</span>
@@ -307,70 +310,95 @@ export const AddQuotationApp = () => {
                                     </select>
                                 </div>
                                 <div className="d-flex">
-                                    <div className="w-100 mr-1">
-                                        <span className='form-label'>Costos notariales</span>
-                                        <input onInput={(e) => soloNumerosDecimales(e)} type="number" className="form-control" {...register('notarial_cost', { required: true })} />
+                                    <div className='w-100'>
+                                        <div className="w-100 mr-1">
+                                            <span className='form-label'>Costos notariales</span>
+                                            <input onInput={(e) => soloNumerosDecimales(e)} type="number" className="form-control" {...register('notarial_cost', { required: true })} />
+                                        </div>
+                                        {errors.notarial_cost && <span className='text-danger d-block'>Los costos notariales es obligatorio</span>}
                                     </div>
 
-                                    <div className="w-100 ml-1">
-                                        <span className='form-label'>Costos registrales</span>
-                                        <input onInput={(e) => soloNumerosDecimales(e)} type="text" className="form-control" {...register('registration_cost',{required:true})} />
+                                    <div className='w-100'>
+                                        <div className="w-100 ml-1">
+                                            <span className='form-label'>Costos registrales</span>
+                                            <input onInput={(e) => soloNumerosDecimales(e)} type="text" className="form-control" {...register('registration_cost', { required: true })} />
+                                        </div>
+                                        {errors.registration_cost && <span className='text-danger'>Los costos registrales es obligatorio</span>}
                                     </div>
                                 </div>
-                                {errors.notarial_cost && <span className='text-danger d-block'>Los costos notariales es obligatorio</span>}
-                                {errors.registration_cost && <span className='text-danger'>Los costos registrales es obligatorio</span>}
+
+
                                 <div className="d-flex">
-                                    <div className="w-100 mr-1">
-                                        <span className='form-label'>Tasación</span>
-                                        <input onInput={(e) => soloNumerosDecimales(e)} type="text" className="form-control" {...register('appraisal', { required: true })} />
+                                    <div className='w-100'>
+                                        <div className="w-100 mr-1">
+                                            <span className='form-label'>Tasación</span>
+                                            <input onInput={(e) => soloNumerosDecimales(e)} type="text" className="form-control" {...register('appraisal', { required: true })} />
+                                        </div>
+                                        {errors.appraisal && <span className='text-danger d-block'>La tasación es obligatorio</span>}
                                     </div>
-                                    <div className="w-100 ml-1">
-                                        <span className='form-label'>Comisión de estudio</span>
-                                        <input onInput={(e) => soloNumerosDecimales(e)} type="text" className="form-control" {...register('study_fee', { required: true })} />
+                                    <div className='w-100'>
+                                        <div className="w-100 ml-1">
+                                            <span className='form-label'>Comisión de estudio</span>
+                                            <input onInput={(e) => soloNumerosDecimales(e)} type="text" className="form-control" {...register('study_fee', { required: true })} />
+                                        </div>
+                                        {errors.study_fee && <span className='text-danger'>La comisión de estudio es obligatorio</span>}
                                     </div>
                                 </div>
-                                {errors.appraisal && <span className='text-danger d-block'>La tasación es obligatorio</span>}
-                                {errors.study_fee && <span className='text-danger'>La comisión de estudio es obligatorio</span>}
                                 <div className="form-group mt-2">
                                     <span className='form-label'>Comisión de activación</span>
                                     <input onInput={(e) => soloNumerosDecimales(e)} type="text" className="form-control" {...register('activation_fee', { required: true })} />
                                 </div>
                                 {errors.activation_fee && <span className='text-danger'>La comisión de activación es obligatorio</span>}
                                 <div className="d-flex">
-                                    <div className="w-100 mr-1">
-                                        <span className='form-label'>Comisión periodica</span>
-                                        <input onInput={(e) => soloNumerosDecimales(e)} type="text" className='form-control' placeholder='0.0502%' {...register('periodic_commission', { required: true })} />
+                                    <div className='w-100'>
+                                        <div className="w-100 mr-1">
+                                            <span className='form-label'>Comisión periodica</span>
+                                            <input onInput={(e) => soloNumerosDecimales(e)} type="text" className='form-control' placeholder='0.0502%' {...register('periodic_commission', { required: true })} />
+                                        </div>
+                                        {errors.periodic_commission && <span className='text-danger d-block'>La comisión periodica es obligatorio</span>}
                                     </div>
-                                    <div className="w-100 ml-1 mr-1">
-                                        <span className='form-label'>Portes</span>
-                                        <input onInput={(e) => soloNumerosDecimales(e)} type="text" className='form-control' placeholder='0.0502%' {...register('shipping', { required: true })} />
+                                    <div className='w-100'>
+                                        <div className="w-100 ml-1 mr-1">
+                                            <span className='form-label'>Portes</span>
+                                            <input onInput={(e) => soloNumerosDecimales(e)} type="text" className='form-control' placeholder='0.0502%' {...register('shipping', { required: true })} />
+                                        </div>
+                                        {errors.shipping && <span className='text-danger'>Los portes es obligatorio</span>}
                                     </div>
-                                    <div className="w-100 ml-1">
-                                        <span className='form-label'>Gastos de administración</span>
-                                        <input onInput={(e) => soloNumerosDecimales(e)} type="text" className='form-control' placeholder='0..' {...register('administration_expenses', { required: true })} />
+                                    <div className='w-100'>
+                                        <div className="w-100 ml-1">
+                                            <span className='form-label'>Gastos de administración</span>
+                                            <input onInput={(e) => soloNumerosDecimales(e)} type="text" className='form-control' placeholder='0..' {...register('administration_expenses', { required: true })} />
+                                        </div>
+                                        {errors.administration_expenses && <span className='text-danger d-block'>Los gastos de administración es obligatorio</span>}
                                     </div>
                                 </div>
-                                {errors.periodic_commission && <span className='text-danger d-block'>La comisión periodica es obligatorio</span>}
-                                {errors.shipping && <span className='text-danger'>Los portes es obligatorio</span>}
-                                {errors.administration_expenses && <span className='text-danger d-block'>Los gastos de administración es obligatorio</span>}
+
+
+
                                 <div className="d-flex">
 
-                                    <div className="w-100 mr-1">
-                                        <span className='form-label'>Seguro de desgravamen (%)</span>
-                                        <input onInput={(e) => soloNumerosDecimales(e)} type="text" className='form-control ml-1' placeholder='0.0502%' {...register('credit_life_insurence', { required: true })} />
-                                    </div>
-                                    <div className="w-100 ml-1">
-                                        <span className='form-label'>Seguro de riesgo (%)</span>
-                                        <div className="d-flex">
-                                            <select className='form-control mr-1' {...register('timeRisk', { required: true })}>
-                                                <option value="anual">Anual</option>
-                                            </select>
-                                            <input onInput={(e) => soloNumerosDecimales(e)} type="text" className='form-control' placeholder='0.0502%' {...register('risk_insurence', { required: true })} />
+                                    <div className='w-100'>
+                                        <div className="w-100 mr-1">
+                                            <span className='form-label'>Seguro de desgravamen (%)</span>
+                                            <input onInput={(e) => soloNumerosDecimales(e)} type="text" className='form-control ml-1' placeholder='0.0502%' {...register('credit_life_insurence', { required: true })} />
                                         </div>
+                                        {errors.credit_life_insurence && <span className='text-danger d-block'>El seguro de desgravamen es obligatorio</span>}
+                                    </div>
+                                    <div className='w-100'>
+                                        <div className="w-100 ml-1">
+                                            <span className='form-label'>Seguro de riesgo (%)</span>
+                                            <div className="d-flex">
+                                                <select className='form-control mr-1' {...register('timeRisk', { required: true })}>
+                                                    <option value="anual">Anual</option>
+                                                </select>
+                                                <input onInput={(e) => soloNumerosDecimales(e)} type="text" className='form-control' placeholder='0.0502%' {...register('risk_insurence', { required: true })} />
+                                            </div>
+                                        </div>
+                                        {errors.risk_insurence && <span className='text-danger'>El seguro de riesgo es obligatorio</span>}
                                     </div>
                                 </div>
-                                {errors.credit_life_insurence && <span className='text-danger d-block'>El seguro de desgravamen es obligatorio</span>}
-                                {errors.risk_insurence && <span className='text-danger'>El seguro de riesgo es obligatorio</span>}
+
+
                             </div>
                         </div>
                     </div>
