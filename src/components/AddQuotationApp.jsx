@@ -216,7 +216,7 @@ export const AddQuotationApp = () => {
                                         <select className='form-control' {...register('cok_type', { required: true })}>
                                             <option value="efectiva">TEA</option>
                                         </select>
-                                        <input onInput={(e) => soloNumerosDecimales(e)} type="number" className='form-control ml-1' placeholder='25.5%' {...register('cok', { required: true })} />
+                                        <input onInput={(e) => soloNumerosDecimales(e)} type="text" className='form-control ml-1' placeholder='25.5%' {...register('cok', { required: true })} />
                                     </div>
                                 </div>
                                 {errors.cok && <span className='text-danger'>El cok es obligatorio</span>}
