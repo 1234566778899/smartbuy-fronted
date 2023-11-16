@@ -52,7 +52,15 @@ export const AddQuotationApp = () => {
         if (!user) return showToastInfo('Debe seleccionar un cliente');
         if (!car) return showToastInfo('Debe seleccionar un auto');
         const quatotationData = {
-            customer: user._id,
+            customer: {
+                name: user.name,
+                lname: user.lname,
+                email: user.email,
+                address: user.address,
+                telephone: user.telephone,
+                documentType: user.documentType,
+                documentNumber: user.documentNumber,
+            },
             frecuencyPay: Number(allForm.frecuency_pay),
             numDues: totalCuotas,
             fee: Number(tea),
@@ -84,7 +92,7 @@ export const AddQuotationApp = () => {
             estado: id ? 'renovado' : 'pendiente',
             porcRisk: allForm.risk_insurence
         }
-        setQuotation({ ...quatotationData, car, customer: user });
+        setQuotation({ ...quatotationData, car });
         setVisible('#box_add_datatation', false);
     }
     const getQuotations = () => {
