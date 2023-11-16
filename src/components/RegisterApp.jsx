@@ -5,6 +5,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { CONFI } from '../utils/config';
 import logo from '../assets/logo.png'
+import { showToastInfo } from '../utils';
 export const RegisterApp = () => {
     const { register, handleSubmit, formState: { errors } } = useForm();
     const navigate = useNavigate();
@@ -13,9 +14,7 @@ export const RegisterApp = () => {
     const submitRegister = (data) => {
         axios.post(`${CONFI.uri}/user/register`, data)
             .then(response => {
-                localStorage.setItem('id', response.data.id);
-                navigate('/dashboard');
-                localStorage.setItem('nav', 'dashboard');
+                showToastInfo(response.data.ok);
             })
             .catch(error => {
                 console.log(error);
