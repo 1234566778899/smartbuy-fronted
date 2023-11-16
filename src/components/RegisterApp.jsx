@@ -15,6 +15,7 @@ export const RegisterApp = () => {
         axios.post(`${CONFI.uri}/user/register`, data)
             .then(response => {
                 showToastInfo(response.data.ok);
+                navigate('/login');
             })
             .catch(error => {
                 console.log(error);
