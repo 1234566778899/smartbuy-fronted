@@ -127,7 +127,7 @@ export const QuotationApp = () => {
                         </tbody>
                     </table>
                     {
-                        quotations && (<nav aria-label="Page navigation example">
+                        quotations && quotations.length > 0 && (<nav aria-label="Page navigation example">
                             <ul class="pagination">
                                 <li class="page-item"><a class="page-link" onClick={() => setpage(x => (x <= 1 ? x : x - 1))}>Anterior</a></li>
                                 {
