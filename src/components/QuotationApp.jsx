@@ -66,11 +66,11 @@ export const QuotationApp = () => {
                     <button className='btn btn-success' type='submit'>Buscar</button>
                 </form>
                 <div className='leyenda mb-2'>
-                    <span onClick={() => getQuotations({ estado: 'pendiente' })}>Pendiente</span>
-                    <span onClick={() => getQuotations({ estado: 'curso' })}>En curso</span>
-                    <span onClick={() => getQuotations({ estado: 'renovado' })}>Renovado</span>
-                    <span onClick={() => getQuotations({ estado: 'comprado' })}>Comprado</span>
-                    <span onClick={() => getQuotations({ estado: 'entregado' })}>Entregado</span>
+                    <span className='bg-danger shadow' onClick={() => getQuotations({ estado: 'pendiente' })}>Pendiente</span>
+                    <span className='bg-success shadow' onClick={() => getQuotations({ estado: 'curso' })}>En curso</span>
+                    <span className='bg-warning shadow' onClick={() => getQuotations({ estado: 'renovado' })}>Renovado</span>
+                    <span className='bg-info shadow' onClick={() => getQuotations({ estado: 'comprado' })}>Comprado</span>
+                    <span className='bg-secondary shadow' onClick={() => getQuotations({ estado: 'entregado' })}>Entregado</span>
                 </div>
                 <div className="table-crud-quotation">
                     <table className='bg-white table-quotation'>
