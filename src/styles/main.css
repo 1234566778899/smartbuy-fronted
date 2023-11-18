@@ -692,6 +692,7 @@ th {
     filter: brightness(0.9);
 }
 
+
 .leyenda span {
     margin: 2px;
     padding: 5px 10px;
@@ -741,4 +742,24 @@ a {
     text-decoration: line-through;
     font-size: 0.8rem;
     color: rgb(211, 6, 6);
+}
+
+.loading {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.loading i {
+    font-size: 40px;
+    animation: giro 2s infinite linear;
+}
+
+@keyframes giro {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
 }

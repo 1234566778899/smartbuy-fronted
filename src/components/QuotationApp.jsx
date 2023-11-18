@@ -11,11 +11,11 @@ import { CONFI } from '../utils/config';
 export const QuotationApp = () => {
     const navigate = useNavigate();
     const { register, handleSubmit, formState: { errors } } = useForm();
-    const [quotations, setquotations] = useState([]);
+    const [quotations, setquotations] = useState(null);
     const getQuotations = (data) => {
         axios.post(`${CONFI.uri}/quotation/list`, data)
             .then(response => {
-                setquotations(response.data);
+                setquotations(response.data ? response.data : []);
             })
             .catch(error => {
                 showToastInfo('Error');
@@ -91,8 +91,10 @@ export const QuotationApp = () => {
                             </tr>
                         </thead>
                         <tbody>
+
                             {
-                                quotations.map((quo, i) => (
+
+                                quotations && quotations.map((quo, i) => (
                                     <tr key={quo._id} className={`row-quotation`}>
                                         <td>{i + 1}</td>
                                         <td >{quo.estado == 'curso' ? 'EN CURSO' : quo.estado.toUpperCase()}</td>
@@ -120,8 +122,11 @@ export const QuotationApp = () => {
                             }
                         </tbody>
                     </table>
-                    {quotations.length == 0 && <p className='mt-2 text-center'>No existen operaciones</p>}
+                    {quotations && quotations.length == 0 && <p className='mt-2 text-center'>No existen operaciones</p>}
                 </div>
+                {
+                    !quotations && <div className='loading'> <i className="fa-solid fa-spinner"></i></div>
+                }
                 <br />
             </div>
         </div>
