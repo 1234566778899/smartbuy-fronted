@@ -11,11 +11,15 @@ import { CONFI } from '../utils/config';
 export const QuotationApp = () => {
     const navigate = useNavigate();
     const { register, handleSubmit, formState: { errors } } = useForm();
+    const [page, setpage] = useState(1);
+    const [maxPages, setmaxPages] = useState(0);
     const [quotations, setquotations] = useState(null);
     const getQuotations = (data) => {
         axios.post(`${CONFI.uri}/quotation/list`, data)
             .then(response => {
                 setquotations(response.data ? response.data : []);
+                setmaxPages(Math.ceil(response.data.length / 10));
+                setpage(1);
             })
             .catch(error => {
                 showToastInfo('Error');
@@ -94,7 +98,7 @@ export const QuotationApp = () => {
 
                             {
 
-                                quotations && quotations.map((quo, i) => (
+                                quotations && quotations.slice(10 * (page - 1), page * 10).map((quo, i) => (
                                     <tr key={quo._id} className={`row-quotation`}>
                                         <td>{i + 1}</td>
                                         <td >{quo.estado == 'curso' ? 'EN CURSO' : quo.estado.toUpperCase()}</td>
@@ -122,6 +126,19 @@ export const QuotationApp = () => {
                             }
                         </tbody>
                     </table>
+                    {
+                        quotations && (<nav aria-label="Page navigation example">
+                            <ul class="pagination">
+                                <li class="page-item"><a class="page-link" onClick={() => setpage(x => (x <= 1 ? x : x - 1))}>Anterior</a></li>
+                                {
+                                    Array.from({ length: maxPages }).map((_, index) =>
+                                        (<li onClick={() => setpage(index + 1)} className="page-item"><a className={`page-link ${index + 1 == page ? 'bg-primary text-white' : ''}`}>{index + 1}</a></li>)
+                                    )
+                                }
+                                <li class="page-item"><a class="page-link" onClick={() => setpage(x => (x >= maxPages ? x : x + 1))}>Siguiente</a></li>
+                            </ul>
+                        </nav>)
+                    }
                     {quotations && quotations.length == 0 && <p className='mt-2 text-center'>No existen operaciones</p>}
                 </div>
                 {

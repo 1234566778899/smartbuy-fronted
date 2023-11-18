@@ -48,6 +48,17 @@
     overflow-x: scroll;
 }
 
+.table-quotation::-webkit-scrollbar {
+    width: 2px;
+}
+
+.table-quotation::-webkit-scrollbar {
+    width: 5px;
+}
+
+.table-quotation::-webkit-scrollbar-thumb {
+    background: rgb(51, 51, 51);
+}
 
 #find_customer {
     display: none;
