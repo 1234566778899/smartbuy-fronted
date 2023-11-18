@@ -128,14 +128,14 @@ export const QuotationApp = () => {
                     </table>
                     {
                         quotations && quotations.length > 0 && (<nav aria-label="Page navigation example">
-                            <ul class="pagination">
-                                <li class="page-item"><a class="page-link" onClick={() => setpage(x => (x <= 1 ? x : x - 1))}>Anterior</a></li>
+                            <ul className="pagination">
+                                <li className="page-item"><a className="page-link" onClick={() => setpage(x => (x <= 1 ? x : x - 1))}>Anterior</a></li>
                                 {
                                     Array.from({ length: maxPages }).map((_, index) =>
                                         (<li onClick={() => setpage(index + 1)} className="page-item"><a className={`page-link ${index + 1 == page ? 'bg-primary text-white' : ''}`}>{index + 1}</a></li>)
                                     )
                                 }
-                                <li class="page-item"><a class="page-link" onClick={() => setpage(x => (x >= maxPages ? x : x + 1))}>Siguiente</a></li>
+                                <li className="page-item"><a className="page-link" onClick={() => setpage(x => (x >= maxPages ? x : x + 1))}>Siguiente</a></li>
                             </ul>
                         </nav>)
                     }
