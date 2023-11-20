@@ -293,7 +293,7 @@ export const DetailsQuotation = () => {
                                 </tr>
                                 <tr className='impar'>
                                     <td className='key'>TCEA de la operación</td>
-                                    <td className='value'>{quotation && quotation.TCEA.toFixed(5)}</td>
+                                    <td className='value'>{quotation && quotation.TCEA.toFixed(5)} %</td>
                                 </tr>
                                 <tr>
                                     <td className='key'>VAN operación</td>
